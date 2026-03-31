@@ -1,0 +1,15 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: mode-manager
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: docker.io/shidina/mode-manager:v1
+          ports:
+            - containerPort: 3002
+          env:
+            - name: MONGODB_URI
+              value: mongodb://rule-mongo:27017/modemanager

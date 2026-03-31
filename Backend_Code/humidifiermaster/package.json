@@ -1,0 +1,13 @@
+{
+   "name": "humidifier-microservice",
+   "version": "1.0.0",
+   "description": "A microservice for controlling a humidifier (on/off, 5 levels).",
+   "main": "humidifier_service.js",
+   "scripts": {
+      "start": "node humidifier_service.js"
+   },
+   "dependencies": {
+      "express": "^4.21.2",
+      "redis": "^4.6.7"
+   }
+}

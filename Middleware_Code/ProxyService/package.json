@@ -1,0 +1,13 @@
+{
+    "name": "proxy-server",
+    "version": "1.0.0",
+    "description": "Knative Proxy Server for Smart Home",
+    "main": "proxy-server.js",
+    "scripts": {
+      "start": "node proxy-server.js"
+    },
+    "dependencies": {
+      "http": "*",
+      "https": "*"
+    }
+  }

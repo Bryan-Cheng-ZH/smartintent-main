@@ -1,0 +1,16 @@
+{
+  "name": "temperature-sensor-microservice",
+  "version": "1.0.0",
+  "description": "A microservice that simulates temperature readings, updating periodically based on external factors.",
+  "main": "temperature_service.js",
+  "scripts": {
+    "start": "node temperature_service.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "express": "^4.21.2",
+    "redis": "^4.6.7"
+  }
+}

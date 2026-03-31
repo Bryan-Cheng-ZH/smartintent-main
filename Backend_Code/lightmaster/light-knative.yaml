@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: light-microservice
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: docker.io/shidina/light-microservice:v1
+          ports:
+            - containerPort: 3000

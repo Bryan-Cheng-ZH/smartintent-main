@@ -1,0 +1,15 @@
+ {
+   "name": "smart-curtains-microservice",
+   "version": "1.0.0",
+   "description": "A microservice for controlling Smart Curtains with on/off status and openPercentage using Redis for state persistence.",
+   "main": "smart_curtains_service.js",
+   "scripts": {
+     "start": "node smart_curtains_service.js"
+   },
+   "author": "",
+   "license": "ISC",
+   "dependencies": {
+     "express": "^4.18.2",
+     "redis": "^4.6.7"
+   }
+ }

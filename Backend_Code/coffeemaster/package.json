@@ -1,0 +1,15 @@
+{
+  "name": "coffee-machine-microservice",
+  "version": "1.0.0",
+  "description": "A microservice for controlling a coffee machine with on/off status, brew mode, and auto-off logic after 10 seconds.",
+  "main": "coffee_machine_service.js",
+  "scripts": {
+    "start": "node coffee_machine_service.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "redis": "^4.6.7"
+  }
+}

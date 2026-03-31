@@ -1,0 +1,21 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: rule-engine
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: shidina/rule-engine:v1
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://rule-mongo.default.svc.cluster.local:27017/ruleengine"
+          readinessProbe:
+            httpGet:
+              path: /rules     # 或者你实际有的 API 路径
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5

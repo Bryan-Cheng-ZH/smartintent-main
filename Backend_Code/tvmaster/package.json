@@ -1,0 +1,13 @@
+{
+  "name": "tv-microservice",
+  "version": "1.0.0",
+  "description": "A microservice for controlling a TV (status, channel, volume).",
+  "main": "tv_service.js",
+  "scripts": {
+    "start": "node tv_service.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "redis": "^4.6.7"
+  }
+}

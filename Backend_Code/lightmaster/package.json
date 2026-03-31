@@ -1,0 +1,13 @@
+  {
+    "name": "light-microservice",
+    "version": "1.0.0",
+    "description": "A microservice for controlling a light (status and brightness levels).",
+    "main": "light_service.js",
+    "scripts": {
+      "start": "node light_service.js"
+    },
+    "dependencies": {
+      "express": "^4.18.2",
+      "redis": "^4.6.7"
+    }
+  }

@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: recorder-service
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: shidina/recorder-service:v1
+          ports:
+            - containerPort: 5001

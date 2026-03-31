@@ -1,0 +1,13 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: dispatcher
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: docker.io/shidina/dispatcher:v1
+          ports:
+            - containerPort: 3000
+            

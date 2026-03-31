@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>智能家居3D界面</title>
+  <style>
+    body { 
+      margin: 0; 
+      overflow: hidden; 
+      background-color: #1a2632; 
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+    }
+    canvas { display: block; }
+    #info {
+      position: absolute; 
+      top: 10px; 
+      width: 100%; 
+      text-align: center; 
+      color: white;
+      pointer-events: none;
+      z-index: 100;
+    }
+    #error {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: red;
+      background: rgba(0,0,0,0.7);
+      padding: 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 200;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 24px;
+    }
+    .label {
+      color: white;
+      font-size: 16px;
+      background-color: rgba(50, 50, 50, 0.8);
+      padding: 5px 10px;
+      border-radius: 20px;
+      pointer-events: none;
+    }
+    #controls {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+      background-color: rgba(0,0,0,0.5);
+      padding: 10px;
+      border-radius: 5px;
+    }
+    #status-info {
+      position: absolute;
+      top: 50px;
+      right: 20px;
+      color: white;
+      background-color: rgba(0,0,0,0.5);
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">正在加载 Three.js...</div>
+  <div id="loading">加载中...</div>
+  <div id="error"></div>
+  <div id="controls">
+    拖动: 旋转视图 | 滚轮: 缩放 | 右键拖动: 平移
+  </div>
+  <div id="status-info"></div>
+
+  <!-- 使用传统脚本标签加载Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <!-- 正式版OrbitControls -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  
+  <!-- CSS2DRenderer for labels -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+  
+  <!-- 导入组件 -->
+  <script src="components/modernSofa.js"></script>
+  <script src="components/tvComponent.js"></script>
+  <script src="components/lampComponent.js"></script>
+  <script src="components/airConditionerComponent.js"></script>
+  <script src="components/curtainsComponent.js"></script>
+  <script src="components/humidifierComponent.js"></script>
+  <script src="components/coffeeMakerComponent.js"></script>
+  <script src="components/airPurifierComponent.js"></script>
+  <script>
+    // 错误处理函数
+    function showError(message) {
+      const errorDiv = document.getElementById('error');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      document.getElementById('info').textContent = '加载3D场景时出错';
+      document.getElementById('loading').style.display = 'none';
+      console.error(message);
+    }
+
+    // 进度显示
+    function updateProgress(message) {
+      document.getElementById('loading').textContent = message;
+    }
+
+    // 设备实例存储对象
+    const devices = {};
+
+    // 设备当前状态
+    const statusData = {
+      tv: { status: "off", channel: 1, volume: 10 },
+      light: { status: "off", brightness: 1 },
+      airConditioner: { status: "off", temperature: 24, mode: "cool", fanSpeed: "medium" },
+      smartCurtains: { status: "off", openPercentage: 100 },
+      humidifier: { status: "off", intensity: 1 },
+      airPurifier: { status: "off", mode: "auto", fanSpeed: "medium", airQuality: 25 },
+      coffeeMaker: { status: "off", brewing: false, fillLevel: 0 }
+    };
+
+    // 状态信息显示
+    function updateStatusInfo() {
+      const statusDiv = document.getElementById('status-info');
+      let html = '<h3>设备状态</h3>';
+      
+      // TV状态
+      html += `<div>电视: ${statusData.tv.status === 'on' ? '开启' : '关闭'}`;
+      if (statusData.tv.status === 'on') {
+        html += ` | 频道: ${statusData.tv.channel}`;
+      }
+      html += '</div>';
+      
+      // 灯光状态
+      html += `<div>灯光: ${statusData.light.status === 'on' ? '开启' : '关闭'}`;
+      if (statusData.light.status === 'on') {
+        html += ` | 亮度: ${statusData.light.brightness}`;
+      }
+      html += '</div>';
+      
+      // 空调状态
+      html += `<div>空调: ${statusData.airConditioner.status === 'on' ? '开启' : '关闭'}`;
+      if (statusData.airConditioner.status === 'on') {
+        html += ` | ${statusData.airConditioner.temperature}°C | ${statusData.airConditioner.mode === 'cool' ? '制冷' : '制热'}`;
+      }
+      html += '</div>';
+      
+      // 窗帘状态
+      html += `<div>窗帘: ${statusData.smartCurtains.status === 'on' ? '开启' : '关闭'} | 开启度: ${statusData.smartCurtains.openPercentage}%</div>`;
+      
+      // 加湿器状态
+      html += `<div>加湿器: ${statusData.humidifier.status === 'on' ? '开启' : '关闭'}`;
+      if (statusData.humidifier.status === 'on') {
+        html += ` | 强度: ${statusData.humidifier.intensity}`;
+      }
+      html += '</div>';
+      
+      // 空气净化器状态
+      html += `<div>空气净化器: ${statusData.airPurifier.status === 'on' ? '开启' : '关闭'}`;
+      if (statusData.airPurifier.status === 'on') {
+        html += ` | 模式: ${statusData.airPurifier.mode} | 空气质量: ${statusData.airPurifier.airQuality}`;
+      }
+      html += '</div>';
+      
+      // 咖啡机状态
+      html += `<div>咖啡机: ${statusData.coffeeMaker.status === 'on' ? '开启' : '关闭'}`;
+      if (statusData.coffeeMaker.status === 'on') {
+        html += ` | ${statusData.coffeeMaker.brewing ? '正在冲煮' : '待机中'}`;
+      }
+      html += '</div>';
+      
+      statusDiv.innerHTML = html;
+    }
+
+    // WebSocket 通信
+    let socket;
+
+    // 初始化WebSocket连接
+    function initWebSocket() {
+      // 使用本地存储监听器
+      window.addEventListener('storage', function(event) {
+        if (event.key === 'smartHomeStatus') {
+          try {
+            const newStatus = JSON.parse(event.newValue);
+            console.log('接收到状态更新:', newStatus);
+            updateDeviceVisuals(newStatus);
+          } catch (e) {
+            console.error('解析状态数据失败:', e);
+          }
+        }
+      });
+
+      // 尝试WebSocket连接
+      try {
+        socket = new WebSocket('ws://localhost:8080/device-status');
+        
+        socket.onopen = () => {
+          console.log('WebSocket连接已建立');
+        };
+        
+        socket.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            console.log('WebSocket收到消息:', data);
+            updateDeviceVisuals(data);
+          } catch (e) {
+            console.error('解析WebSocket消息失败:', e);
+          }
+        };
+        
+        socket.onerror = (error) => {
+          console.error('WebSocket错误:', error);
+          console.log('使用本地存储方式作为备选通信方法');
+        };
+        
+        socket.onclose = () => {
+          console.log('WebSocket连接已关闭');
+          // 尝试重新连接
+          setTimeout(initWebSocket, 5000);
+        };
+      } catch (e) {
+        console.error('初始化WebSocket失败:', e);
+        console.log('使用本地存储方式作为备选通信方法');
+      }
+      
+      // 尝试从localStorage获取初始状态
+      const savedStatus = localStorage.getItem('smartHomeStatus');
+      if (savedStatus) {
+        try {
+          const initialStatus = JSON.parse(savedStatus);
+          console.log('从localStorage读取初始状态:', initialStatus);
+          updateDeviceVisuals(initialStatus);
+        } catch (e) {
+          console.error('解析localStorage状态失败:', e);
+        }
+      }
+    }
+
+    // 更新设备视觉效果
+    function updateDeviceVisuals(newStatusData) {
+      console.log('更新设备视觉效果:', newStatusData);
+      
+      // 更新电视
+      if(newStatusData.tv && devices.tv) {
+        statusData.tv = {...statusData.tv, ...newStatusData.tv};
+        devices.tv.setStatus(statusData.tv.status);
+        if(statusData.tv.status === 'on') {
+          devices.tv.setChannel(statusData.tv.channel);
+        }
+      }
+      
+      // 更新灯光
+      if(newStatusData.light && devices.lamp) {
+        statusData.light = {...statusData.light, ...newStatusData.light};
+        devices.lamp.setStatus(statusData.light.status);
+        if(statusData.light.status === 'on') {
+          devices.lamp.setBrightness(statusData.light.brightness);
+        }
+      }
+      
+      // 更新空调
+      if(newStatusData.airConditioner && devices.airConditioner) {
+        statusData.airConditioner = {...statusData.airConditioner, ...newStatusData.airConditioner};
+        devices.airConditioner.setStatus(statusData.airConditioner.status);
+        if(statusData.airConditioner.status === 'on') {
+          devices.airConditioner.setTemperature(statusData.airConditioner.temperature);
+          devices.airConditioner.setMode(statusData.airConditioner.mode);
+        }
+      }
+      
+      // 更新窗帘
+      if(newStatusData.smartCurtains && devices.curtains) {
+        statusData.smartCurtains = {...statusData.smartCurtains, ...newStatusData.smartCurtains};
+        devices.curtains.setStatus(statusData.smartCurtains.status);
+        devices.curtains.setOpenPercentage(statusData.smartCurtains.openPercentage);
+      }
+      
+    // 更新加湿器
+    if(newStatusData.humidifier && devices.humidifier) {
+      // 处理字段名称不匹配问题 - 将level映射到intensity
+      if(newStatusData.humidifier.level !== undefined && newStatusData.humidifier.intensity === undefined) {
+        newStatusData.humidifier.intensity = newStatusData.humidifier.level;
+        console.log(`检测到level字段 (${newStatusData.humidifier.level})，已映射到intensity`);
+      }
+      
+      // 更新状态数据
+      statusData.humidifier = {...statusData.humidifier, ...newStatusData.humidifier};
+      
+      // 先设置强度/档位，无论设备是否开启
+      // 这确保了即使在关闭状态下调整档位，档位值也会被保存并在显示屏上更新
+      if(statusData.humidifier.intensity) {
+        console.log(`更新加湿器强度到 ${statusData.humidifier.intensity}`);
+        // 使用兼容方法如果存在，否则使用标准方法
+        if(typeof devices.humidifier.setIntensityOrLevel === 'function') {
+          devices.humidifier.setIntensityOrLevel(statusData.humidifier.intensity);
+        } else {
+          devices.humidifier.setIntensity(statusData.humidifier.intensity);
+        }
+      }
+      
+      // 然后设置开关状态
+      console.log(`设置加湿器状态为 ${statusData.humidifier.status}`);
+      devices.humidifier.setStatus(statusData.humidifier.status);
+    }
+      
+      // 更新空气净化器
+      if(newStatusData.airPurifier && devices.airPurifier) {
+        statusData.airPurifier = {...statusData.airPurifier, ...newStatusData.airPurifier};
+        devices.airPurifier.setStatus(statusData.airPurifier.status);
+        if(statusData.airPurifier.status === 'on') {
+          if(statusData.airPurifier.airQuality) {
+            devices.airPurifier.setAirQuality(statusData.airPurifier.airQuality);
+          }
+          if(statusData.airPurifier.fanSpeed) {
+            const fanSpeedMapping = {
+              'low': 1,
+              'medium': 2,
+              'high': 3
+            };
+            const numericSpeed = fanSpeedMapping[statusData.airPurifier.fanSpeed] || 2;
+            devices.airPurifier.setFanSpeed(numericSpeed);
+          }
+        }
+      }
+      
+      // 更新咖啡机
+      if(newStatusData.coffeeMachine && devices.coffeeMaker) {
+        // 映射字段名
+        if(newStatusData.coffeeMachine.status !== undefined) {
+          statusData.coffeeMaker.status = newStatusData.coffeeMachine.status;
+        }
+        if(newStatusData.coffeeMachine.brewMode !== undefined) {
+          statusData.coffeeMaker.brewMode = newStatusData.coffeeMachine.brewMode;
+        }
+        
+        devices.coffeeMaker.setStatus(statusData.coffeeMaker.status);
+        if(statusData.coffeeMaker.status === 'on') {
+          if(newStatusData.coffeeMachine.brewing !== undefined) {
+            statusData.coffeeMaker.brewing = newStatusData.coffeeMachine.brewing;
+            devices.coffeeMaker.setBrewing(statusData.coffeeMaker.brewing);
+          }
+          // 模拟咖啡填充水平
+          if(statusData.coffeeMaker.brewing) {
+            statusData.coffeeMaker.fillLevel = 0.8;
+          } else {
+            statusData.coffeeMaker.fillLevel = 0.0;
+          }
+          devices.coffeeMaker.setCoffeeFillLevel(statusData.coffeeMaker.fillLevel);
+        }
+      }
+      
+      // 更新状态信息显示
+      updateStatusInfo();
+    }
+
+    // 当页面加载完成后执行
+    window.addEventListener('load', function() {
+      try {
+        updateProgress('初始化场景...');
+        
+        // 初始化场景
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a2632);
+
+        // 初始化相机 - 使用等距视图
+        updateProgress('设置相机...');
+        const camera = new THREE.OrthographicCamera(
+          -10, 10, 
+          8, -8, 
+          0.1, 
+          1000
+        );
+        
+        // 初始化渲染器
+        updateProgress('创建渲染器...');
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+        
+        // 初始化CSS2D渲染器（用于标签）
+        const labelRenderer = new THREE.CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(labelRenderer.domElement);
+
+        // 添加控制器
+        updateProgress('添加控制器...');
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enableRotate = true;
+        controls.enableZoom = true;
+        controls.autoRotate = false;
+        
+        // 函数来创建标签
+        function createLabel(text, position) {
+          const div = document.createElement('div');
+          div.className = 'label';
+          div.textContent = text;
+          
+          const label = new THREE.CSS2DObject(div);
+          label.position.set(position.x, position.y, position.z);
+          scene.add(label);
+          return label;
+        }
+
+        // 添加墙壁组
+        updateProgress('创建房间...');
+        const roomGroup = new THREE.Group();
+        scene.add(roomGroup);
+        
+        // 墙壁材质
+        const wallMaterial = new THREE.MeshStandardMaterial({ 
+          color: 0x9fb0b9,
+          roughness: 0.8 
+        });
+        
+        // 墙壁尺寸
+        const roomSize = 8;
+        const wallHeight = 5;
+        
+        // 创建地板
+        const floorGeometry = new THREE.BoxGeometry(roomSize, 0.5, roomSize);
+        const floorMaterial = new THREE.MeshStandardMaterial({ 
+          color: 0xd2bc94,
+          roughness: 0.8
+        });
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.position.y = -0.25;
+        floor.receiveShadow = true;
+        roomGroup.add(floor);
+        
+        // 创建左墙
+        const leftWallGeometry = new THREE.BoxGeometry(0.2, wallHeight, roomSize);
+        const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
+        leftWall.position.x = -roomSize/2;
+        leftWall.position.y = wallHeight/2;
+        leftWall.receiveShadow = true;
+        roomGroup.add(leftWall);
+        
+        // 创建后墙
+        const backWallGeometry = new THREE.BoxGeometry(roomSize, wallHeight, 0.2);
+        const backWall = new THREE.Mesh(backWallGeometry, wallMaterial);
+        backWall.position.z = -roomSize/2;
+        backWall.position.y = wallHeight/2;
+        backWall.receiveShadow = true;
+        roomGroup.add(backWall);
+        
+        // 添加踢脚线
+        const baseboardMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        
+        // 左墙踢脚线
+        const leftBaseboardGeometry = new THREE.BoxGeometry(0.1, 0.5, roomSize);
+        const leftBaseboard = new THREE.Mesh(leftBaseboardGeometry, baseboardMaterial);
+        leftBaseboard.position.x = -roomSize/2 + 0.15;
+        leftBaseboard.position.y = 0.25;
+        roomGroup.add(leftBaseboard);
+        
+        // 后墙踢脚线
+        const backBaseboardGeometry = new THREE.BoxGeometry(roomSize, 0.5, 0.1);
+        const backBaseboard = new THREE.Mesh(backBaseboardGeometry, baseboardMaterial);
+        backBaseboard.position.z = -roomSize/2 + 0.15;
+        backBaseboard.position.y = 0.25;
+        roomGroup.add(backBaseboard);
+        
+        // 添加茶几
+        const tableGeometry = new THREE.BoxGeometry(1.6, 0.4, 1);
+        const tableMaterial = new THREE.MeshStandardMaterial({ 
+          color: 0x8d6e63,
+          roughness: 0.8 
+        });
+        const table = new THREE.Mesh(tableGeometry, tableMaterial);
+        table.position.set(1, 0.2, 1.5);
+        table.castShadow = true;
+        table.receiveShadow = true;
+        roomGroup.add(table);
+        
+        // 添加地毯
+        const carpetGeometry = new THREE.PlaneGeometry(3, 2);
+        const carpetMaterial = new THREE.MeshStandardMaterial({ 
+          color: 0xf4e6a9,
+          roughness: 1,
+          side: THREE.DoubleSide
+        });
+        const carpet = new THREE.Mesh(carpetGeometry, carpetMaterial);
+        carpet.rotation.x = -Math.PI / 2;
+        carpet.position.y = 0.01;
+        carpet.position.z = 0.5;
+        carpet.receiveShadow = true;
+        roomGroup.add(carpet);
+        
+        updateProgress('添加智能设备...');
+        
+        // 使用组件创建电视
+        const tv = createTV();
+        tv.position.set(-2, 0, -3);
+        roomGroup.add(tv);
+        devices.tv = tv;
+        createLabel('TV', {x: -2, y: 2.8, z: -3});
+        
+        // 使用组件创建台灯
+        const lamp = createLamp();
+        lamp.position.set(-3, 0, 0);
+        roomGroup.add(lamp);
+        devices.lamp = lamp;
+        createLabel('LIGHT', {x: -3, y: 1.8, z: 0});
+        
+        // 使用组件创建沙发
+        const modernSofa = createModernSofa();
+        modernSofa.position.set(1.5, 0, 0); 
+        roomGroup.add(modernSofa);
+        
+        // 使用组件创建空调
+        const airConditioner = createAirConditioner();
+        airConditioner.position.set(0, 4, -3.9);
+        roomGroup.add(airConditioner);
+        devices.airConditioner = airConditioner;
+        createLabel('AIR CONDITIONER', {x: 0, y: 4.6, z: -3.5});
+        
+        // 使用组件创建窗帘
+        const curtains = createCurtains();
+        curtains.position.set(2.5, 2, -3.9);
+        roomGroup.add(curtains);
+        devices.curtains = curtains;
+        createLabel('CURTAINS', {x: 3, y: 3.5, z: -3.5});
+        
+        // 使用组件创建咖啡机
+        const coffeeMaker = createCoffeeMaker();
+        coffeeMaker.position.set(1, 0.4, 1.5);
+        roomGroup.add(coffeeMaker);
+        devices.coffeeMaker = coffeeMaker;
+        createLabel('COFFEE MAKER', {x: 1, y: 1.4, z: 1.5});
+        
+        // 使用组件创建加湿器
+        const humidifier = createHumidifier();
+        humidifier.position.set(-0.5, 0, -3);
+        roomGroup.add(humidifier);
+        devices.humidifier = humidifier;
+        createLabel('HUMIDIFIER', {x: -0.5, y: 1.2, z: -3});
+        
+        // 使用组件创建空气净化器
+        const airPurifier = createAirPurifier();
+        airPurifier.position.set(3.5, 0, -2);
+        roomGroup.add(airPurifier);
+        devices.airPurifier = airPurifier;
+        createLabel('AIR PURIFIER', {x: 3.5, y: 1.6, z: -2});
+        
+        // 添加环境光
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+        
+        // 添加主光源（平行光）
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        mainLight.position.set(5, 10, 5);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 1024;
+        mainLight.shadow.mapSize.height = 1024;
+        mainLight.shadow.camera.near = 0.5;
+        mainLight.shadow.camera.far = 50;
+        mainLight.shadow.camera.left = -10;
+        mainLight.shadow.camera.right = 10;
+        mainLight.shadow.camera.top = 10;
+        mainLight.shadow.camera.bottom = -10;
+        scene.add(mainLight);
+        
+        // 添加辅助光源（柔和的填充光）
+        const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        fillLight.position.set(-5, 5, -5);
+        scene.add(fillLight);
+        
+        // 设置等距视图的相机位置
+        camera.position.set(8, 8, 8);
+        camera.lookAt(0, 0, 0);
+        camera.zoom = 0.8;
+        camera.updateProjectionMatrix();
+        
+        // 处理窗口大小调整
+        window.addEventListener('resize', function() {
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          labelRenderer.setSize(window.innerWidth, window.innerHeight);
+          camera.updateProjectionMatrix();
+        });
+        
+        // 初始状态更新
+        updateStatusInfo();
+        
+        // 渲染循环
+        updateProgress('初始化渲染循环...');
+        function animate() {
+          requestAnimationFrame(animate);
+          
+          // 更新控制器
+          controls.update();
+          
+          // 调用设备的动画更新方法
+          if (devices.airConditioner && 
+              devices.airConditioner.animateBlades && 
+              statusData.airConditioner.status === 'on') {
+            devices.airConditioner.animateBlades();
+          }
+          
+          if (devices.humidifier && 
+              devices.humidifier.animate && 
+              statusData.humidifier.status === 'on') {
+            devices.humidifier.animate();
+          }
+          
+          // 渲染场景和标签
+          renderer.render(scene, camera);
+          labelRenderer.render(scene, camera);
+        }
+        
+        // 初始化WebSocket通信
+        initWebSocket();
+        
+        // 开始动画
+        animate();
+
+        // 隐藏加载中提示
+        document.getElementById('loading').style.display = 'none';
+        
+        // 更新信息文本
+        document.getElementById('info').textContent = '智能家居3D界面 - 包含7种智能设备';
+        console.log('Three.js 场景初始化成功');
+        
+        // 设置控制器参数
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 5;
+        controls.maxDistance = 20;
+        controls.maxPolarAngle = Math.PI / 2;
+        
+      } catch (error) {
+        showError(`初始化Three.js场景失败: ${error.message}`);
+      }
+    });
+  </script>
+</body>
+</html>

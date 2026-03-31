@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: temperature-sensor
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: docker.io/shidina/temperature-sensor:v1
+          ports:
+            - containerPort: 3000

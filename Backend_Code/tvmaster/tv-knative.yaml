@@ -1,0 +1,17 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: tv-microservice
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: docker.io/shidina/tv-microservice:v1
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REDIS_HOST
+              value: "redis.default.svc.cluster.local"
+            - name: NODE_ENV
+              value: "production"

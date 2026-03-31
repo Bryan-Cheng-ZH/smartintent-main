@@ -1,0 +1,20 @@
+[
+  {
+    "id": "rule_001",
+    "trigger": {
+      "sensor": "temperatureSensor",
+      "operator": ">",
+      "value": 28
+    },
+    "action": {
+      "deviceId": "ac",
+      "action": "turn_on",
+      "parameters": {
+        "temperature": 26,
+        "mode": "cool",
+        "fanSpeed": "medium"
+      }
+    },
+    "active": true
+  }
+]

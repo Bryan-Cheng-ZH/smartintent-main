@@ -1,0 +1,15 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: airconditioner-microservice
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: docker.io/shidina/airconditioner-microservice:v1
+          env:
+            - name: NODE_ENV
+              value: "production"
+          ports:
+            - containerPort: 3000
