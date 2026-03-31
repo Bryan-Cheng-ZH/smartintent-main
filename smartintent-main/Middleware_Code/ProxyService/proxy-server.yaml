@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: proxy-server
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: docker.io/wangjiayue123/proxy-server:v2
+          ports:
+            - containerPort: 8080
