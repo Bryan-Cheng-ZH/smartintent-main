@@ -294,15 +294,15 @@ def confirm_rule():
         except Exception:
             rule_engine_response = {"raw_text": rule_resp.text}
 
-        if rule_resp.status_code != 201:
+        if rule_resp.status_code not in [200, 201]:
             return jsonify({
-                "error": "rule-engine failed to create rule",
+                "error": "rule-engine failed to save rule",
                 "rule_engine_status": rule_resp.status_code,
                 "rule_engine_response": rule_engine_response
             }), rule_resp.status_code
 
         return jsonify({
-            "message": "Rule created successfully",
+            "message": "Rule saved successfully",
             "rule_engine_status": rule_resp.status_code,
             "rule_engine_response": rule_engine_response
         }), 201

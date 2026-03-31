@@ -7,7 +7,7 @@ spec:
   template:
     spec:
       containers:
-        - image: wangjiayue123/rule-engine:v2
+        - image: wangjiayue123/rule-engine:v3
           ports:
             - containerPort: 3000
           env:

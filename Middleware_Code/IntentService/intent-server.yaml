@@ -7,6 +7,6 @@ spec:
   template:
     spec:
       containers:
-        - image: docker.io/wangjiayue123/intent-server:v6
+        - image: docker.io/wangjiayue123/intent-server:v7
           ports:
             - containerPort: 5050

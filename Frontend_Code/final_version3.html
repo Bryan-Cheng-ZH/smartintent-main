@@ -1738,23 +1738,61 @@
                 console.log('confirm-rule response =', data);
 
                 if (!response.ok) {
-                  throw new Error(data.error || `Rule creation failed! status: ${response.status}`);
+                  throw new Error(data.error || `Rule save failed! status: ${response.status}`);
                 }
 
-                if (data.rule_engine_status !== 201 || !data.rule_engine_response || !data.rule_engine_response.rule) {
-                  throw new Error('rule-engine 没有真正创建成功');
+                if (
+                  ![200, 201].includes(data.rule_engine_status) ||
+                  !data.rule_engine_response ||
+                  !data.rule_engine_response.rule
+                ) {
+                  throw new Error('rule-engine 没有真正保存成功');
                 }
 
                 return data;
               })
               .then(data => {
-                this.commandResult = `✅ ${this.$i18n.locale === 'en' ? 'Rule created successfully' : '规则创建成功'}`;
+                const op = data.rule_engine_response?.operation;
+
+                if (op === 'updated') {
+                  this.commandResult = `✅ ${
+                    this.$i18n.locale === 'en'
+                      ? 'Rule updated successfully'
+                      : '规则已更新成功'
+                  }`;
+                } else if (op === 'replaced_conflicts') {
+                  const deleted = data.rule_engine_response?.deletedRuleIds?.length || 0;
+
+                  this.commandResult = `✅ ${
+                    this.$i18n.locale === 'en'
+                      ? `Replaced ${deleted} conflicting rule(s)`
+                      : `已替换 ${deleted} 条冲突规则`
+                  }`;
+                } else if (op === 'created') {
+                  this.commandResult = `✅ ${
+                    this.$i18n.locale === 'en'
+                      ? 'Rule created successfully'
+                      : '规则创建成功'
+                  }`;
+                } else {
+                  console.warn('Unknown operation:', op);
+                  this.commandResult = `✅ ${
+                    this.$i18n.locale === 'en'
+                      ? 'Rule saved successfully'
+                      : '规则已保存成功'
+                  }`;
+                }
+
                 this.commandSuccess = true;
                 this.fetchStatus();
               })
               .catch(err => {
                 console.error('confirm rule failed:', err);
-                this.commandResult = `❌ ${this.$i18n.locale === 'en' ? '规则创建失败' : '规则创建失败'}: ${err.message}`;
+                this.commandResult = `❌ ${
+                  this.$i18n.locale === 'en'
+                    ? 'Rule save failed'
+                    : '规则保存失败'
+                }: ${err.message}`;
                 this.commandSuccess = false;
               })
               .finally(() => {
