@@ -7,6 +7,6 @@ spec:
   template:
     spec:
       containers:
-        - image: docker.io/shidina/intent-server:v1
+        - image: docker.io/wangjiayue123/intent-server:v6
           ports:
             - containerPort: 5050

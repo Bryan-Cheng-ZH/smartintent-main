@@ -7,6 +7,6 @@ spec:
   template:
     spec:
       containers:
-        - image: docker.io/shidina/proxy-server:v1
+        - image: docker.io/wangjiayue123/proxy-server:v2
           ports:
             - containerPort: 8080

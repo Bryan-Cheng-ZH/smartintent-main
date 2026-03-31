@@ -85,25 +85,37 @@ app.get('/rules', async (req, res) => {
 
 // API: 添加新规则
 app.post('/rules', async (req, res) => {
-  const newRule = req.body;
+  try {
+    const newRule = req.body;
+    console.log("===== POST /rules =====");
+    console.log("Received newRule:", JSON.stringify(newRule, null, 2));
 
-  if (!newRule.id || !newRule.trigger || !newRule.action) {
-    return res.status(400).json({ error: "Lose necessary field（id, trigger, action）" });
+    if (!newRule.id || !newRule.trigger || !newRule.action) {
+      console.log("❌ Missing required fields");
+      return res.status(400).json({ error: "Lose necessary field（id, trigger, action）" });
+    }
+
+    const exists = await Rule.findOne({ id: newRule.id });
+    if (exists) {
+      console.log("❌ Duplicate rule id:", newRule.id);
+      return res.status(400).json({ error: `Rule ID '${newRule.id}' is exist.` });
+    }
+
+    const validOperators = ['>', '>=', '<', '<=', '==', '!='];
+    if (!validOperators.includes(newRule.trigger.operator)) {
+      console.log("❌ Invalid operator:", newRule.trigger.operator);
+      return res.status(400).json({ error: `Do not support：${newRule.trigger.operator}` });
+    }
+
+    const rule = new Rule(newRule);
+    await rule.save();
+
+    console.log("✅ Rule saved to MongoDB:", rule);
+    return res.status(201).json({ message: "Rule has been added!", rule });
+  } catch (err) {
+    console.error("❌ Error while saving rule:", err);
+    return res.status(500).json({ error: err.message });
   }
-
-  const exists = await Rule.findOne({ id: newRule.id });
-  if (exists) {
-    return res.status(400).json({ error: `Rule ID '${newRule.id}' is exist.` });
-  }
-
-  const validOperators = ['>', '>=', '<', '<=', '==', '!='];
-  if (!validOperators.includes(newRule.trigger.operator)) {
-    return res.status(400).json({ error: `Do not support：${newRule.trigger.operator}` });
-  }
-
-  const rule = new Rule(newRule);
-  await rule.save();
-  res.status(201).json({ message: "Rule has been added!", rule });
 });
 
 // API: 删除规则

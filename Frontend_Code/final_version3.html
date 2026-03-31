@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart home control panel</title>
+  <!-- Include Vue -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <!-- Include Vue-i18n -->
+  <script src="https://unpkg.com/vue-i18n@8.26.5/dist/vue-i18n.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+  <!-- 添加图标库 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  
+  <!-- 确保图标正常显示的备用样式 -->
+  <style>
+    .back-button-enhanced {
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      width: 40px; 
+      height: 40px; 
+      background-color: #f5f5f5; 
+      border-radius: 50%; 
+      border: none; 
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    
+    .back-button-enhanced i {
+      font-size: 16px; 
+      color: #333;
+    }
+    
+    /* 如果Font Awesome无法加载，使用文本替代 */
+    .back-arrow-text {
+      display: none;
+    }
+    
+    .back-button-enhanced .fas.fa-chevron-left:empty + .back-arrow-text {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" class="container">
+    <div class="app-container">
+      <!-- 顶部状态栏 -->
+      <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="status-icons">
+          <i class="fas fa-signal"></i>
+          <i class="fas fa-wifi"></i>
+          <i class="fas fa-battery-full"></i>
+        </div>
+      </div>
+
+      <!-- 欢迎区域 -->
+      <div class="welcome-section">
+        <div class="welcome-text">
+          <h1>{{ $t('hi') }} {{ $t('user') }}</h1>
+          <p>{{ $t('welcomeBack') }}</p>
+        </div>
+        
+        <!-- 语言切换滑钮 -->
+        <div class="language-toggle-container">
+          <span class="language-label">EN</span>
+          <label class="language-switch">
+            <input type="checkbox" :checked="$i18n.locale === 'zh'" @change="toggleLanguage">
+            <span class="language-slider"></span>
+          </label>
+          <span class="language-label">中</span>
+        </div>
+      </div>
+
+      <div v-if="loading" class="loader">
+        <p>{{ $t('loading') }}</p>
+      </div>
+      
+      <template v-if="!loading">
+        <div v-if="error" class="error-message">
+          <p>{{ error }}</p>
+        </div>
+        
+        <!-- 传感器信息卡片 -->
+        <div class="info-cards">
+          <div class="location-card">
+            <h3>{{ $t('myLocation') }}</h3>
+            <div class="location-name">{{ $t('defaultCity') }}</div>
+            <div class="temperature">{{ statusData.temperatureSensor.currentTemperature }}°C</div>
+            <div class="weather-condition"><i class="fas fa-cloud-sun"></i> {{ $t('partlyCloudy') }}</div>
+          </div>
+          
+          <div class="energy-card">
+            <h3>{{ $t('sensorStatus') }}</h3>
+            <div class="sensors-container">
+              <div class="sensor-item">
+                <i class="fas fa-thermometer-half"></i>
+                <span>{{ statusData.temperatureSensor.currentTemperature }}°C</span>
+              </div>
+              <div class="sensor-item">
+                <i class="fas fa-tint"></i>
+                <span>{{ statusData.humiditySensor.currentHumidity }}%</span>
+              </div>
+              <div class="sensor-item">
+                <i class="fas fa-smog"></i>
+                <span>{{ statusData.pollutionSensor.currentPollution }}/500</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 设备列表容器 - 可滚动 -->
+        <div class="devices-scroll-container">
+          <h3 class="section-title">{{ $t('homeApplianceStatus') }}</h3>
+          
+          <div class="devices-grid">
+            <!-- 灯光 -->
+            <div class="device-card light" @click="showDeviceDetail('light')">
+              <div class="device-card-header">
+                <i class="fas fa-lightbulb device-icon"></i>
+              </div>
+              <div class="device-name">{{ $t('light') }}</div>
+              <div class="device-detail">{{ $t('brightness') }}: {{ statusData.light.brightness }}/5</div>
+              <label class="switch">
+                <input type="checkbox" :checked="statusData.light.status === 'on'" @change="controlDevice('light', 'status', $event.target.checked ? 'on' : 'off')">
+                <span class="slider round"></span>
+              </label>
+              <div class="device-status">{{ statusData.light.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+            
+            <!-- 电视 -->
+            <div class="device-card tv" @click="showDeviceDetail('tv')">
+              <div class="device-card-header">
+                <i class="fas fa-tv device-icon"></i>
+              </div>
+              <div class="device-name">{{ $t('tv') }}</div>
+              <div class="device-detail">{{ $t('channel') }}: {{ statusData.tv.channel }}</div>
+              <label class="switch">
+                <input type="checkbox" :checked="statusData.tv.status === 'on'" @change="controlDevice('tv', 'status', $event.target.checked ? 'on' : 'off')">
+                <span class="slider round"></span>
+              </label>
+              <div class="device-status">{{ statusData.tv.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+            
+            <!-- 空调 -->
+            <div class="device-card ac" @click="showDeviceDetail('ac')">
+              <div class="device-card-header">
+                <i class="fas fa-snowflake device-icon"></i>
+              </div>
+              <div class="device-name">{{ $t('airConditioner') }}</div>
+              <div class="device-detail">{{ statusData.airConditioner.temperature }}°C</div>
+              <label class="switch">
+                <input type="checkbox" :checked="statusData.airConditioner.status === 'on'" @change="controlDevice('ac', 'status', $event.target.checked ? 'on' : 'off')">
+                <span class="slider round"></span>
+              </label>
+              <div class="device-status">{{ statusData.airConditioner.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+            
+            <!-- 加湿器 -->
+            <div class="device-card humidifier" @click="showDeviceDetail('humidifier')">
+              <div class="device-card-header">
+                <i class="fas fa-tint device-icon"></i>
+              </div>
+              <div class="device-name">{{ $t('humidifier') }}</div>
+              <div class="device-detail">{{ $t('level') }}: {{ statusData.humidifier.level }}/5</div>
+              <label class="switch">
+                <input type="checkbox" :checked="statusData.humidifier.status === 'on'" @change="controlDevice('humidifier', 'status', $event.target.checked ? 'on' : 'off')">
+                <span class="slider round"></span>
+              </label>
+              <div class="device-status">{{ statusData.humidifier.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+
+            <!-- 智能窗帘 -->
+            <div class="device-card curtains" @click="showDeviceDetail('smartCurtains')">
+              <div class="device-card-header">
+                <i class="fas fa-sliders-h device-icon"></i>
+              </div>
+              <div class="device-name">{{ $t('smartCurtains') }}</div>
+              <div class="device-detail">{{ statusData.smartCurtains.openPercentage }}%</div>
+              <label class="switch">
+                <input type="checkbox" :checked="statusData.smartCurtains.status === 'on'" @change="controlDevice('smartCurtains', 'status', $event.target.checked ? 'on' : 'off')">
+                <span class="slider round"></span>
+              </label>
+              <div class="device-status">{{ statusData.smartCurtains.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+
+            <!-- 空气净化器 -->
+            <div class="device-card air-purifier" @click="showDeviceDetail('airPurifier')">
+              <div class="device-card-header">
+                <i class="fas fa-wind device-icon"></i>
+              </div>
+              <div class="device-name">{{ $t('airPurifier') }}</div>
+              <div class="device-detail">{{ $t(statusData.airPurifier.mode) }}</div>
+              <label class="switch">
+                <input type="checkbox" :checked="statusData.airPurifier.status === 'on'" @change="controlDevice('airPurifier', 'status', $event.target.checked ? 'on' : 'off')">
+                <span class="slider round"></span>
+              </label>
+              <div class="device-status">{{ statusData.airPurifier.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+
+            <!-- 扫地机器人 -->
+            <div class="device-card robot-vacuum" @click="showDeviceDetail('robotVacuum')">
+              <div class="device-card-header">
+                <i class="fas fa-robot device-icon"></i>
+              </div>
+              <div class="device-name">{{ $t('robotVacuum') }}</div>
+              <div class="device-detail">{{ $t(statusData.robotVacuum.cleaningMode) }}</div>
+              <label class="switch">
+                <input type="checkbox" :checked="statusData.robotVacuum.status === 'on'" @change="controlDevice('robotVacuum', 'status', $event.target.checked ? 'on' : 'off')">
+                <span class="slider round"></span>
+              </label>
+              <div class="device-status">{{ statusData.robotVacuum.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+
+            <!-- 咖啡机 -->
+            <div class="device-card coffee-machine" @click="showDeviceDetail('coffeeMachine')">
+              <div class="device-card-header">
+                <i class="fas fa-coffee device-icon"></i>
+              </div>
+              <div class="device-name">{{ $t('coffeeMachine') }}</div>
+              <div class="device-detail">{{ $t(statusData.coffeeMachine.brewMode.toLowerCase()) }}</div>
+              <label class="switch">
+                <input type="checkbox" :checked="statusData.coffeeMachine.status === 'on'" @change="controlDevice('coffeeMachine', 'status', $event.target.checked ? 'on' : 'off')">
+                <span class="slider round"></span>
+              </label>
+              <div class="device-status">{{ statusData.coffeeMachine.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 设备详情面板 -->
+        <!-- 灯光详情面板 -->
+        <div class="device-detail-panel" v-if="currentDevice === 'light'">
+          <div class="panel-header">
+            <button class="back-button back-button-enhanced" @click="closeDeviceDetail">
+              <i class="fas fa-chevron-left"></i>
+              <span class="back-arrow-text">&lt;</span>
+            </button>
+            <h2>{{ $t('light') }}</h2>
+            <div class="status-badge" :class="statusData.light.status === 'on' ? 'status-on' : 'status-off'">
+              {{ statusData.light.status === 'on' ? $t('on') : $t('off') }}
+            </div>
+          </div>
+          
+          <div class="panel-content">
+            <div class="control-section">
+              <h3>{{ $t('power') }}</h3>
+              <div class="control-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.light.status === 'on'}" 
+                       @click="controlDevice('light', 'status', 'on')" 
+                       :disabled="deviceControlDisabled.light">{{ $t('on') }}</button>
+                <button class="toggle-btn" :class="{'active': statusData.light.status === 'off'}" 
+                       @click="controlDevice('light', 'status', 'off')" 
+                       :disabled="deviceControlDisabled.light">{{ $t('off') }}</button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('brightness') }}</h3>
+              <div class="control-slider">
+                <div class="slider-value">{{ statusData.light.brightness }}/5</div>
+                <div class="slider-control">
+                  <button class="slider-btn" 
+                         @click="controlDevice('light', 'brightness', statusData.light.brightness - 1)"
+                         :disabled="statusData.light.status === 'off' || statusData.light.brightness <= 1 || deviceControlDisabled.light">-</button>
+                  <div class="slider-bar">
+                    <div class="slider-fill" :style="{width: (statusData.light.brightness / 5 * 100) + '%'}"></div>
+                  </div>
+                  <button class="slider-btn" 
+                         @click="controlDevice('light', 'brightness', statusData.light.brightness + 1)"
+                         :disabled="statusData.light.status === 'off' || statusData.light.brightness >= 5 || deviceControlDisabled.light">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <div v-if="controlFeedback.light" class="control-feedback" 
+                :class="{'feedback-success': controlFeedback.light.includes($t('success'))}">
+              {{ controlFeedback.light }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- 电视详情面板 -->
+        <div class="device-detail-panel" v-if="currentDevice === 'tv'">
+          <div class="panel-header">
+            <button class="back-button back-button-enhanced" @click="closeDeviceDetail">
+              <i class="fas fa-chevron-left"></i>
+              <span class="back-arrow-text">&lt;</span>
+            </button>
+            <h2>{{ $t('tv') }}</h2>
+            <div class="status-badge" :class="statusData.tv.status === 'on' ? 'status-on' : 'status-off'">
+              {{ statusData.tv.status === 'on' ? $t('on') : $t('off') }}
+            </div>
+          </div>
+          
+          <div class="panel-content">
+            <div class="control-section">
+              <h3>{{ $t('power') }}</h3>
+              <div class="control-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.tv.status === 'on'}" 
+                       @click="controlDevice('tv', 'status', 'on')" 
+                       :disabled="deviceControlDisabled.tv">{{ $t('on') }}</button>
+                <button class="toggle-btn" :class="{'active': statusData.tv.status === 'off'}" 
+                       @click="controlDevice('tv', 'status', 'off')" 
+                       :disabled="deviceControlDisabled.tv">{{ $t('off') }}</button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('channel') }}</h3>
+              <div class="control-slider">
+                <div class="slider-value">{{ statusData.tv.channel }}</div>
+                <div class="slider-control">
+                  <button class="slider-btn" 
+                         @click="controlDevice('tv', 'channel', statusData.tv.channel - 1)"
+                         :disabled="statusData.tv.status === 'off' || statusData.tv.channel <= 1 || deviceControlDisabled.tv">-</button>
+                  <div class="slider-bar">
+                    <div class="slider-fill" :style="{width: (statusData.tv.channel / 20 * 100) + '%'}"></div>
+                  </div>
+                  <button class="slider-btn" 
+                         @click="controlDevice('tv', 'channel', statusData.tv.channel + 1)"
+                         :disabled="statusData.tv.status === 'off' || statusData.tv.channel >= 20 || deviceControlDisabled.tv">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('volume') }}</h3>
+              <div class="control-slider">
+                <div class="slider-value">{{ statusData.tv.volume }}</div>
+                <div class="slider-control">
+                  <button class="slider-btn" 
+                         @click="controlDevice('tv', 'volume', statusData.tv.volume - 5)"
+                         :disabled="statusData.tv.status === 'off' || statusData.tv.volume <= 0 || deviceControlDisabled.tv">-</button>
+                  <div class="slider-bar">
+                    <div class="slider-fill" :style="{width: (statusData.tv.volume / 100 * 100) + '%'}"></div>
+                  </div>
+                  <button class="slider-btn" 
+                         @click="controlDevice('tv', 'volume', statusData.tv.volume + 5)"
+                         :disabled="statusData.tv.status === 'off' || statusData.tv.volume >= 100 || deviceControlDisabled.tv">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <div v-if="controlFeedback.tv" class="control-feedback" 
+                :class="{'feedback-success': controlFeedback.tv.includes($t('success'))}">
+              {{ controlFeedback.tv }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- 空调详情面板 -->
+        <div class="device-detail-panel" v-if="currentDevice === 'ac'">
+          <div class="panel-header">
+            <button class="back-button back-button-enhanced" @click="closeDeviceDetail">
+              <i class="fas fa-chevron-left"></i>
+              <span class="back-arrow-text">&lt;</span>
+            </button>
+            <h2>{{ $t('airConditioner') }}</h2>
+            <div class="status-badge" :class="statusData.airConditioner.status === 'on' ? 'status-on' : 'status-off'">
+              {{ statusData.airConditioner.status === 'on' ? $t('on') : $t('off') }}
+            </div>
+          </div>
+          
+          <div class="panel-content">
+            <div class="temperature-control">
+              <div class="temp-circle">
+                <div class="temp-label">{{ $t(statusData.airConditioner.mode) }}</div>
+                <div class="current-temp">{{ statusData.airConditioner.temperature }}<span>°C</span></div>
+              </div>
+              
+              <div class="temp-wheel">
+                <div class="wheel-controls">
+                  <button class="temp-button" @click="controlDevice('ac', 'temperature', statusData.airConditioner.temperature - 1)" 
+                         :disabled="statusData.airConditioner.status === 'off' || statusData.airConditioner.temperature <= 16 || deviceControlDisabled.ac">-</button>
+                  <button class="temp-button" @click="controlDevice('ac', 'temperature', statusData.airConditioner.temperature + 1)"
+                         :disabled="statusData.airConditioner.status === 'off' || statusData.airConditioner.temperature >= 30 || deviceControlDisabled.ac">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('power') }}</h3>
+              <div class="control-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.airConditioner.status === 'on'}" 
+                       @click="controlDevice('ac', 'status', 'on')" 
+                       :disabled="deviceControlDisabled.ac">{{ $t('on') }}</button>
+                <button class="toggle-btn" :class="{'active': statusData.airConditioner.status === 'off'}" 
+                       @click="controlDevice('ac', 'status', 'off')" 
+                       :disabled="deviceControlDisabled.ac">{{ $t('off') }}</button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('mode') }}</h3>
+              <div class="control-toggle mode-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.airConditioner.mode === 'cool'}" 
+                       @click="controlDevice('ac', 'mode', 'cool')"
+                       :disabled="statusData.airConditioner.status === 'off' || deviceControlDisabled.ac">
+                  <i class="fas fa-snowflake"></i> {{ $t('cool') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.airConditioner.mode === 'heat'}" 
+                       @click="controlDevice('ac', 'mode', 'heat')"
+                       :disabled="statusData.airConditioner.status === 'off' || deviceControlDisabled.ac">
+                  <i class="fas fa-fire"></i> {{ $t('heat') }}
+                </button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('fanSpeed') }}</h3>
+              <div class="control-toggle fan-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.airConditioner.fanSpeed === 'low'}" 
+                       @click="controlDevice('ac', 'fanSpeed', 'low')"
+                       :disabled="statusData.airConditioner.status === 'off' || deviceControlDisabled.ac">
+                  {{ $t('low') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.airConditioner.fanSpeed === 'medium'}" 
+                       @click="controlDevice('ac', 'fanSpeed', 'medium')"
+                       :disabled="statusData.airConditioner.status === 'off' || deviceControlDisabled.ac">
+                  {{ $t('medium') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.airConditioner.fanSpeed === 'high'}" 
+                       @click="controlDevice('ac', 'fanSpeed', 'high')"
+                       :disabled="statusData.airConditioner.status === 'off' || deviceControlDisabled.ac">
+                  {{ $t('high') }}
+                </button>
+              </div>
+            </div>
+            
+            <div v-if="controlFeedback.ac" class="control-feedback" 
+                :class="{'feedback-success': controlFeedback.ac.includes($t('success'))}">
+              {{ controlFeedback.ac }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- 加湿器详情面板 -->
+        <div class="device-detail-panel" v-if="currentDevice === 'humidifier'">
+          <div class="panel-header">
+            <button class="back-button back-button-enhanced" @click="closeDeviceDetail">
+              <i class="fas fa-chevron-left"></i>
+              <span class="back-arrow-text">&lt;</span>
+            </button>
+            <h2>{{ $t('humidifier') }}</h2>
+            <div class="status-badge" :class="statusData.humidifier.status === 'on' ? 'status-on' : 'status-off'">
+              {{ statusData.humidifier.status === 'on' ? $t('on') : $t('off') }}
+            </div>
+          </div>
+          
+          <div class="panel-content">
+            <div class="control-section">
+              <h3>{{ $t('power') }}</h3>
+              <div class="control-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.humidifier.status === 'on'}" 
+                       @click="controlDevice('humidifier', 'status', 'on')" 
+                       :disabled="deviceControlDisabled.humidifier">{{ $t('on') }}</button>
+                <button class="toggle-btn" :class="{'active': statusData.humidifier.status === 'off'}" 
+                       @click="controlDevice('humidifier', 'status', 'off')" 
+                       :disabled="deviceControlDisabled.humidifier">{{ $t('off') }}</button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('humidityLevel') }}</h3>
+              <div class="control-slider">
+                <div class="slider-value">{{ statusData.humidifier.level }}/5</div>
+                <div class="slider-control">
+                  <button class="slider-btn" 
+                         @click="controlDevice('humidifier', 'level', statusData.humidifier.level - 1)"
+                         :disabled="statusData.humidifier.status === 'off' || statusData.humidifier.level <= 1 || deviceControlDisabled.humidifier">-</button>
+                  <div class="slider-bar">
+                    <div class="slider-fill" :style="{width: (statusData.humidifier.level / 5 * 100) + '%'}"></div>
+                  </div>
+                  <button class="slider-btn" 
+                         @click="controlDevice('humidifier', 'level', statusData.humidifier.level + 1)"
+                         :disabled="statusData.humidifier.status === 'off' || statusData.humidifier.level >= 5 || deviceControlDisabled.humidifier">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <div v-if="controlFeedback.humidifier" class="control-feedback" 
+                :class="{'feedback-success': controlFeedback.humidifier.includes($t('success'))}">
+              {{ controlFeedback.humidifier }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- 智能窗帘详情面板 -->
+        <div class="device-detail-panel" v-if="currentDevice === 'smartCurtains'">
+          <div class="panel-header">
+            <button class="back-button back-button-enhanced" @click="closeDeviceDetail">
+              <i class="fas fa-chevron-left"></i>
+              <span class="back-arrow-text">&lt;</span>
+            </button>
+            <h2>{{ $t('smartCurtains') }}</h2>
+            <div class="status-badge" :class="statusData.smartCurtains.status === 'on' ? 'status-on' : 'status-off'">
+              {{ statusData.smartCurtains.status === 'on' ? $t('on') : $t('off') }}
+            </div>
+          </div>
+          
+          <div class="panel-content">
+            <div class="control-section">
+              <h3>{{ $t('power') }}</h3>
+              <div class="control-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.smartCurtains.status === 'on'}" 
+                       @click="controlDevice('smartCurtains', 'status', 'on')" 
+                       :disabled="deviceControlDisabled.smartCurtains">{{ $t('on') }}</button>
+                <button class="toggle-btn" :class="{'active': statusData.smartCurtains.status === 'off'}" 
+                       @click="controlDevice('smartCurtains', 'status', 'off')" 
+                       :disabled="deviceControlDisabled.smartCurtains">{{ $t('off') }}</button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('openPercentage') }}</h3>
+              <div class="control-slider">
+                <div class="slider-value">{{ statusData.smartCurtains.openPercentage }}%</div>
+                <div class="slider-control">
+                  <button class="slider-btn" 
+                         @click="controlDevice('smartCurtains', 'openPercentage', statusData.smartCurtains.openPercentage - 10)"
+                         :disabled="statusData.smartCurtains.status === 'off' || statusData.smartCurtains.openPercentage <= 0 || deviceControlDisabled.smartCurtains">-</button>
+                  <div class="slider-bar">
+                    <div class="slider-fill" :style="{width: statusData.smartCurtains.openPercentage + '%'}"></div>
+                  </div>
+                  <button class="slider-btn" 
+                         @click="controlDevice('smartCurtains', 'openPercentage', statusData.smartCurtains.openPercentage + 10)"
+                         :disabled="statusData.smartCurtains.status === 'off' || statusData.smartCurtains.openPercentage >= 100 || deviceControlDisabled.smartCurtains">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <div v-if="controlFeedback.smartCurtains" class="control-feedback" 
+                :class="{'feedback-success': controlFeedback.smartCurtains.includes($t('success'))}">
+              {{ controlFeedback.smartCurtains }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- 空气净化器详情面板 -->
+        <div class="device-detail-panel" v-if="currentDevice === 'airPurifier'">
+          <div class="panel-header">
+            <button class="back-button back-button-enhanced" @click="closeDeviceDetail">
+              <i class="fas fa-chevron-left"></i>
+              <span class="back-arrow-text">&lt;</span>
+            </button>
+            <h2>{{ $t('airPurifier') }}</h2>
+            <div class="status-badge" :class="statusData.airPurifier.status === 'on' ? 'status-on' : 'status-off'">
+              {{ statusData.airPurifier.status === 'on' ? $t('on') : $t('off') }}
+            </div>
+          </div>
+          
+          <div class="panel-content">
+            <div class="control-section">
+              <h3>{{ $t('power') }}</h3>
+              <div class="control-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.airPurifier.status === 'on'}" 
+                       @click="controlDevice('airPurifier', 'status', 'on')" 
+                       :disabled="deviceControlDisabled.airPurifier">{{ $t('on') }}</button>
+                <button class="toggle-btn" :class="{'active': statusData.airPurifier.status === 'off'}" 
+                       @click="controlDevice('airPurifier', 'status', 'off')" 
+                       :disabled="deviceControlDisabled.airPurifier">{{ $t('off') }}</button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('mode') }}</h3>
+              <div class="control-toggle mode-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.airPurifier.mode === 'auto'}" 
+                       @click="controlDevice('airPurifier', 'mode', 'auto')"
+                       :disabled="statusData.airPurifier.status === 'off' || deviceControlDisabled.airPurifier">
+                  {{ $t('auto') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.airPurifier.mode === 'manual'}" 
+                       @click="controlDevice('airPurifier', 'mode', 'manual')"
+                       :disabled="statusData.airPurifier.status === 'off' || deviceControlDisabled.airPurifier">
+                  {{ $t('manual') }}
+                </button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('fanSpeed') }}</h3>
+              <div class="control-toggle fan-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.airPurifier.fanSpeed === 'low'}" 
+                       @click="controlDevice('airPurifier', 'fanSpeed', 'low')"
+                       :disabled="statusData.airPurifier.status === 'off' || deviceControlDisabled.airPurifier">
+                  {{ $t('low') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.airPurifier.fanSpeed === 'medium'}" 
+                       @click="controlDevice('airPurifier', 'fanSpeed', 'medium')"
+                       :disabled="statusData.airPurifier.status === 'off' || deviceControlDisabled.airPurifier">
+                  {{ $t('medium') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.airPurifier.fanSpeed === 'high'}" 
+                       @click="controlDevice('airPurifier', 'fanSpeed', 'high')"
+                       :disabled="statusData.airPurifier.status === 'off' || deviceControlDisabled.airPurifier">
+                  {{ $t('high') }}
+                </button>
+              </div>
+            </div>
+            
+            <div v-if="controlFeedback.airPurifier" class="control-feedback" 
+                :class="{'feedback-success': controlFeedback.airPurifier.includes($t('success'))}">
+              {{ controlFeedback.airPurifier }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- 扫地机器人详情面板 -->
+        <div class="device-detail-panel" v-if="currentDevice === 'robotVacuum'">
+          <div class="panel-header">
+            <button class="back-button back-button-enhanced" @click="closeDeviceDetail">
+              <i class="fas fa-chevron-left"></i>
+              <span class="back-arrow-text">&lt;</span>
+            </button>
+            <h2>{{ $t('robotVacuum') }}</h2>
+            <div class="status-badge" :class="statusData.robotVacuum.status === 'on' ? 'status-on' : 'status-off'">
+              {{ statusData.robotVacuum.status === 'on' ? $t('on') : $t('off') }}
+            </div>
+          </div>
+          
+          <div class="panel-content">
+            <div class="control-section">
+              <h3>{{ $t('power') }}</h3>
+              <div class="control-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.robotVacuum.status === 'on'}" 
+                       @click="controlDevice('robotVacuum', 'status', 'on')" 
+                       :disabled="deviceControlDisabled.robotVacuum">{{ $t('on') }}</button>
+                <button class="toggle-btn" :class="{'active': statusData.robotVacuum.status === 'off'}" 
+                       @click="controlDevice('robotVacuum', 'status', 'off')" 
+                       :disabled="deviceControlDisabled.robotVacuum">{{ $t('off') }}</button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('cleaningMode') }}</h3>
+              <div class="control-toggle mode-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.robotVacuum.cleaningMode === 'standard'}" 
+                       @click="controlDevice('robotVacuum', 'cleaningMode', 'standard')"
+                       :disabled="statusData.robotVacuum.status === 'off' || deviceControlDisabled.robotVacuum">
+                  {{ $t('standard') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.robotVacuum.cleaningMode === 'quiet'}" 
+                       @click="controlDevice('robotVacuum', 'cleaningMode', 'quiet')"
+                       :disabled="statusData.robotVacuum.status === 'off' || deviceControlDisabled.robotVacuum">
+                  {{ $t('quiet') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.robotVacuum.cleaningMode === 'turbo'}" 
+                       @click="controlDevice('robotVacuum', 'cleaningMode', 'turbo')"
+                       :disabled="statusData.robotVacuum.status === 'off' || deviceControlDisabled.robotVacuum">
+                  {{ $t('turbo') }}
+                </button>
+              </div>
+            </div>
+            
+            <div class="device-info">
+              <div class="info-item">
+                <i class="fas fa-battery-three-quarters"></i>
+                <span>{{ $t('batteryLevel') }}: {{ statusData.robotVacuum.batteryLevel }}%</span>
+              </div>
+            </div>
+            
+            <div v-if="controlFeedback.robotVacuum" class="control-feedback" 
+                :class="{'feedback-success': controlFeedback.robotVacuum.includes($t('success'))}">
+              {{ controlFeedback.robotVacuum }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- 咖啡机详情面板 -->
+        <div class="device-detail-panel" v-if="currentDevice === 'coffeeMachine'">
+          <div class="panel-header">
+            <button class="back-button back-button-enhanced" @click="closeDeviceDetail">
+              <i class="fas fa-chevron-left"></i>
+              <span class="back-arrow-text">&lt;</span>
+            </button>
+            <h2>{{ $t('coffeeMachine') }}</h2>
+            <div class="status-badge" :class="statusData.coffeeMachine.status === 'on' ? 'status-on' : 'status-off'">
+              {{ statusData.coffeeMachine.status === 'on' ? $t('on') : $t('off') }}
+            </div>
+          </div>
+          
+          <div class="panel-content">
+            <div class="control-section">
+              <h3>{{ $t('power') }}</h3>
+              <div class="control-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.coffeeMachine.status === 'on'}" 
+                       @click="controlDevice('coffeeMachine', 'status', 'on')" 
+                       :disabled="deviceControlDisabled.coffeeMachine">{{ $t('on') }}</button>
+                <button class="toggle-btn" :class="{'active': statusData.coffeeMachine.status === 'off'}" 
+                       @click="controlDevice('coffeeMachine', 'status', 'off')" 
+                       :disabled="deviceControlDisabled.coffeeMachine">{{ $t('off') }}</button>
+              </div>
+            </div>
+            
+            <div class="control-section">
+              <h3>{{ $t('brewMode') }}</h3>
+              <div class="control-toggle mode-toggle">
+                <button class="toggle-btn" :class="{'active': statusData.coffeeMachine.brewMode === 'Espresso'}" 
+                       @click="controlDevice('coffeeMachine', 'brewMode', 'Espresso')"
+                       :disabled="statusData.coffeeMachine.status === 'off' || deviceControlDisabled.coffeeMachine">
+                  {{ $t('espresso') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.coffeeMachine.brewMode === 'Latte'}" 
+                       @click="controlDevice('coffeeMachine', 'brewMode', 'Latte')"
+                       :disabled="statusData.coffeeMachine.status === 'off' || deviceControlDisabled.coffeeMachine">
+                  {{ $t('latte') }}
+                </button>
+                <button class="toggle-btn" :class="{'active': statusData.coffeeMachine.brewMode === 'Americano'}" 
+                       @click="controlDevice('coffeeMachine', 'brewMode', 'Americano')"
+                       :disabled="statusData.coffeeMachine.status === 'off' || deviceControlDisabled.coffeeMachine">
+                  {{ $t('americano') }}
+                </button>
+              </div>
+            </div>
+            
+            <div v-if="statusData.coffeeMachine.status === 'on'" class="action-button-container">
+              <button class="action-button" @click="startBrewing" :disabled="deviceControlDisabled.coffeeMachine">
+                {{ $t('startBrewing') }}
+              </button>
+            </div>
+            
+            <div v-if="controlFeedback.coffeeMachine" class="control-feedback" 
+                :class="{'feedback-success': controlFeedback.coffeeMachine.includes($t('success'))}">
+              {{ controlFeedback.coffeeMachine }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- 底部导航栏 -->
+        <div class="bottom-nav">
+          <div class="nav-item active">
+            <i class="fas fa-home"></i>
+          </div>
+          <div class="nav-item" @click="showCommandPanel = !showCommandPanel">
+            <i class="fas fa-microphone"></i>
+          </div>
+          <div class="nav-item">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+
+        <!-- 语音指令面板 -->
+        <div class="command-panel" v-if="showCommandPanel">
+          <div class="command-panel-header">
+            <h2>{{ $t('controlInstruction') }}</h2>
+            <button class="close-button" @click="showCommandPanel = false"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="command-form">
+            <input 
+              type="text" 
+              v-model="command" 
+              class="command-input" 
+              :placeholder="$i18n.locale === 'en' ? 'Enter User Instruction. Example: Turn on the tv.' : '请输入控制指令。例如：打开电视。'"
+            >
+            <button 
+              @click="sendCommand" 
+              class="command-button" 
+              :disabled="commandLoading"
+            >
+              {{ commandLoading ? $t('sending') : $t('sendInstruction') }}
+            </button>
+          </div>
+          
+          <!-- <div class="voice-controls">
+            <button class="voice-button" @click="startRecording">
+              <i class="fas fa-microphone"></i>
+              <span>{{ $i18n.locale === 'en' ? 'Start Recording' : '开始录音' }}</span>
+            </button>
+            <button class="voice-button stop" @click="stopRecording">
+              <i class="fas fa-stop"></i>
+              <span>{{ $i18n.locale === 'en' ? 'Stop Recording' : '停止录音' }}</span>
+            </button>
+          </div> -->
+          <!-- 新加的 -->
+          <div class="voice-controls">
+            <button class="voice-button"
+                    @click="startRecording"
+                    :disabled="isRecording || voiceBusy">
+                <i class="fas fa-microphone"></i>
+                <span>{{ $i18n.locale === 'en' ? 'Start Recording' : '开始录音' }}</span>
+            </button>
+
+            <button class="voice-button stop"
+                    @click="stopRecording"
+                    :disabled="!isRecording || voiceBusy">
+                <i class="fas fa-stop"></i>
+                <span>{{ $i18n.locale === 'en' ? 'Stop Recording' : '停止录音' }}</span>
+            </button>
+         </div>
+
+          <div v-if="commandResult" 
+              class="command-result" 
+              :class="commandSuccess ? 'result-success' : 'result-error'">
+            {{ commandResult }}
+          </div>
+
+          <div v-if="awaitingConfirmation" class="command-result result-success">
+            <p>🤖 {{ $t('aiSuggests') }}: "{{ intentSummary }}"</p>
+            <div class="confirmation-buttons">
+              <button class="confirm-button" @click="confirmIntent">{{ $t('confirmExecute') }}</button>
+              <button class="cancel-button" @click="cancelIntent">{{ $t('cancel') }}</button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <script>
+    // Use Vue-i18n
+    Vue.use(VueI18n);
+    
+    // Define translations
+    const messages = {
+      en: {
+        title: 'Smart home control panel',
+        loading: 'Loading...',
+        switchLanguage: 'Switch to Chinese',
+        lastUpdated: 'Last Updated',
+        hi: 'Hi',
+        user: 'Arpan',
+        welcomeBack: 'Welcome back',
+        myLocation: 'My Location',
+        defaultCity: 'Burdwan',
+        partlyCloudy: 'Partly Cloudy',
+        energySaving: 'Energy Saving',
+        sensorStatus: 'Sensor Data',
+        livingRoom: 'Living Room',
+        bedroom: 'Bedroom',
+        kitchen: 'Kitchen',
+        lighting: 'Lighting',
+        lightCount: '{count} spotlights',
+        deviceCount: '{count} device',
+        smartTV: 'Bravia Smart TV',
+        sony: 'Sony',
+        studio: 'Studio',
+        lgAC: 'LG AC',
+        on: 'On',
+        off: 'Off',
+        cooling: 'COOLING',
+        mode: 'MODE',
+        eco: 'ECO',
+        schedule: 'SCHEDULE',
+        history: 'HISTORY',
+        tempIndoor: 'Temp Indoor',
+        tempOut: 'Temp Out',
+        windSpeed: 'Wind Speed',
+        kmph: 'km/h',
+        temperatureSensor: 'Temperature',
+        humiditySensor: 'Humidity',
+        luminanceSensor: 'Brightness',
+        currentTemperature: 'Current Temperature',
+        currentHumidity: 'Current Humidity',
+        currentBrightness: 'Current Brightness',
+        homeApplianceStatus: 'My Devices',
+        tv: 'TV',
+        light: 'Light',
+        humidifier: 'Humidifier',
+        airConditioner: 'Air Conditioner',
+        channel: 'Channel',
+        volume: 'Volume',
+        brightness: 'Brightness',
+        power: 'Power',
+        level: 'Level',
+        humidityLevel: 'Humidity Level',
+        temperature: 'Temperature',
+        fanSpeed: 'Fan Speed',
+        cool: 'Cool',
+        heat: 'Heat',
+        low: 'Low',
+        medium: 'Medium',
+        high: 'High',
+        temp: 'Temp',
+        fan: 'Fan',
+        controlInstruction: 'Voice Control',
+        sendInstruction: 'Send',
+        sending: 'Sending...',
+        instructionExample: 'Instruction Examples',
+        mockData: '(Mock Data)',
+        processing: 'Processing...',
+        success: 'Success',
+        error: 'Error',
+        aiSuggests: 'AI Suggests',
+        confirmExecute: 'Confirm',
+        cancel: 'Cancel',
+        executeSuccess: 'Success',
+        executeFail: 'Failed',
+        instructionCanceled: 'Canceled',
+        smartCurtains: 'Smart Curtains',
+        airPurifier: 'Air Purifier',
+        robotVacuum: 'Robot Vacuum',
+        coffeeMachine: 'Coffee Machine',
+        openPercentage: 'Open Percentage',
+        airQuality: 'Air Quality',
+        cleaningMode: 'Cleaning Mode',
+        batteryLevel: 'Battery Level',
+        brewMode: 'Brew Mode',
+        standard: 'Standard',
+        quiet: 'Quiet',
+        turbo: 'Turbo',
+        manual: 'Manual',
+        auto: 'Auto',
+        espresso: 'Espresso',
+        latte: 'Latte',
+        americano: 'Americano',
+        startBrewing: 'Start Brewing',
+        brewing: 'Brewing',
+        pollutionSensor: 'Pollution',
+        currentPollution: 'Current Pollution'
+      },
+      zh: {
+        title: '智能家居控制面板',
+        loading: '加载中...',
+        switchLanguage: '切换到英文',
+        lastUpdated: '最后更新',
+        hi: '你好',
+        user: '阿潘',
+        welcomeBack: '欢迎回来',
+        myLocation: '我的位置',
+        defaultCity: '伯德万',
+        partlyCloudy: '多云',
+        energySaving: '节能',
+        sensorStatus: '传感器数据',
+        livingRoom: '客厅',
+        bedroom: '卧室',
+        kitchen: '厨房',
+        lighting: '照明',
+        lightCount: '{count}个射灯',
+        deviceCount: '{count}个设备',
+        smartTV: 'Bravia智能电视',
+        sony: '索尼',
+        studio: '音响',
+        lgAC: 'LG空调',
+        on: '开',
+        off: '关',
+        cooling: '制冷',
+        mode: '模式',
+        eco: '节能',
+        schedule: '日程',
+        history: '历史',
+        tempIndoor: '室内温度',
+        tempOut: '室外温度',
+        windSpeed: '风速',
+        kmph: '公里/小时',
+        temperatureSensor: '温度',
+        humiditySensor: '湿度',
+        luminanceSensor: '亮度',
+        currentTemperature: '当前温度',
+        currentHumidity: '当前湿度',
+        currentBrightness: '当前亮度',
+        homeApplianceStatus: '我的设备',
+        tv: '电视',
+        light: '灯光',
+        humidifier: '加湿器',
+        airConditioner: '空调',
+        channel: '频道',
+        volume: '音量',
+        brightness: '亮度',
+        power: '电源',
+        level: '级别',
+        humidityLevel: '湿度级别',
+        mode: '模式',
+        temperature: '温度',
+        fanSpeed: '风速',
+        cool: '制冷',
+        heat: '制热',
+        low: '低',
+        medium: '中',
+        high: '高',
+        temp: '温度',
+        fan: '风速',
+        controlInstruction: '语音控制',
+        sendInstruction: '发送',
+        sending: '发送中...',
+        instructionExample: '指令示例',
+        mockData: '(模拟数据)',
+        processing: '处理中...',
+        success: '成功',
+        error: '错误',
+        aiSuggests: 'AI建议',
+        confirmExecute: '确认',
+        cancel: '取消',
+        executeSuccess: '成功',
+        executeFail: '失败',
+        instructionCanceled: '已取消',
+        smartCurtains: '智能窗帘',
+        airPurifier: '空气净化器',
+        robotVacuum: '扫地机器人',
+        coffeeMachine: '咖啡机',
+        openPercentage: '开启百分比',
+        airQuality: '空气质量',
+        cleaningMode: '清洁模式',
+        batteryLevel: '电池电量',
+        brewMode: '冲泡模式',
+        standard: '标准',
+        quiet: '安静',
+        turbo: '强力',
+        manual: '手动',
+        auto: '自动',
+        espresso: '意式浓缩',
+        latte: '拿铁',
+        americano: '美式',
+        startBrewing: '开始冲泡',
+        brewing: '冲泡中',
+        pollutionSensor: '污染',
+        currentPollution: '当前污染指数'
+      }
+    };
+
+    // Create i18n instance
+    const i18n = new VueI18n({
+      locale: 'en', // Default locale
+      messages,
+    });
+
+    // Fixed mock data
+    const mockData = {
+      temperatureSensor: { currentTemperature: 28 },
+      pollutionSensor: { currentPollution: 100 },
+      airConditioner: { status: "off", temperature: 22, mode: "cool", fanSpeed: "medium" },
+      humidifier: { status: "off", level: 1 },
+      humiditySensor: { currentHumidity: 30 },
+      brightnessSensor: { currentBrightness: 60 },
+      light: { status: "off", brightness: 1 },
+      tv: { status: "off", channel: 1, volume: 10 },
+      smartCurtains: { status: "off", openPercentage: 100 },
+      airPurifier: { status: "off", mode: "auto", fanSpeed: "medium", airQuality: 150 },
+      robotVacuum: { status: "off", cleaningMode: "standard", batteryLevel: 80 },
+      coffeeMachine: { status: "off", brewMode: "Espresso" }
+    };
+
+    new Vue({
+      i18n,
+      el: '#app',
+      data: {
+        statusData: JSON.parse(JSON.stringify(mockData)),
+        loading: false,
+        error: null,
+        command: '',
+        commandResult: '',
+        commandLoading: false,
+        commandSuccess: true,
+        // 新加的
+        isRecording: false,
+        voiceBusy: false,
+
+        lastUpdated: new Date().toLocaleTimeString() + ' (模拟数据)',
+        useMockData: false,
+        intervalId: null,
+        intentResult: null,
+        intentSummary: '',
+        //新加的
+        rulePayload: null,
+        awaitingConfirmation: false,
+        
+        // 新界面专用状态
+        currentDevice: '', // 当前选中的设备
+        showCommandPanel: false, // 是否显示命令面板
+        
+        // 设备控制变量
+        deviceControlDisabled: {
+          tv: false,
+          light: false,
+          humidifier: false,
+          ac: false,
+          smartCurtains: false,
+          airPurifier: false,
+          robotVacuum: false,
+          coffeeMachine: false
+        },
+        
+        // 控制反馈
+        controlFeedback: {
+          tv: '',
+          light: '',
+          humidifier: '',
+          ac: '',
+          smartCurtains: '',
+          airPurifier: '',
+          robotVacuum: '',
+          coffeeMachine: ''
+        },
+        
+        // 设备微服务URLs
+        deviceUrls: {
+          ac: "http://127.0.0.1:8080/ac/control",
+          light: "http://127.0.0.1:8080/light/control",
+          tv: "http://127.0.0.1:8080/tv/control",
+          humidifier: "http://127.0.0.1:8080/humidifier/control",
+          coffeeMachine: "http://127.0.0.1:8080/coffee/control",
+          smartCurtains: "http://127.0.0.1:8080/curtains/control",
+          robotVacuum: "http://127.0.0.1:8080/robot/control",
+          airPurifier: "http://127.0.0.1:8080/airpurifier/control"
+        },
+        // 设备控制计时器
+        debounceTimers: {
+          tv: null,
+          light: null,
+          humidifier: null,
+          ac: null,
+          smartCurtains: null,
+          airPurifier: null,
+          robotVacuum: null,
+          coffeeMachine: null
+        }
+      },
+      methods: {
+        // 显示设备详情
+        showDeviceDetail(device) {
+          this.currentDevice = device;
+        },
+        
+        // 关闭设备详情
+        closeDeviceDetail() {
+          this.currentDevice = '';
+        },
+        
+        // 开始冲泡咖啡
+        startBrewing() {
+          this.controlFeedback.coffeeMachine = this.$t('brewing') + '...';
+          setTimeout(() => {
+            this.controlFeedback.coffeeMachine = `${this.$t('success')}: ${this.statusData.coffeeMachine.brewMode} ${this.$t('brewing')} complete`;
+            setTimeout(() => {
+              this.controlFeedback.coffeeMachine = '';
+            }, 3000);
+          }, 2000);
+        },
+        
+        // 切换语言
+        toggleLanguage: function() {
+          this.$i18n.locale = this.$i18n.locale === 'en' ? 'zh' : 'en';
+          localStorage.setItem('preferredLanguage', this.$i18n.locale);
+        },
+        
+        // 获取设备状态
+        fetchStatus: function() {
+          if (this.useMockData) {
+            const mockDataText = this.$t('mockData') || '(模拟数据)';
+            this.lastUpdated = new Date().toLocaleTimeString() + ' ' + mockDataText;
+            return;
+          }
+          
+          this.error = null;
+          
+          fetch('http://127.0.0.1:8080/all-status')
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then(data => {
+              this.statusData = data;
+              
+              if (!this.statusData.brightnessSensor) {
+                this.statusData.brightnessSensor = { currentBrightness: 60 };
+              }
+              
+              this.lastUpdated = new Date().toLocaleTimeString();
+              this.error = null;
+            })
+            .catch(err => {
+              console.error('Failed to get status:', err);
+              this.error = `Can not connect to API: ${err.message}`;
+              
+              if (!this.useMockData) {
+                this.useMockData = true;
+                this.statusData = JSON.parse(JSON.stringify(mockData));
+                const mockDataText = this.$t('mockData') || '(模拟数据)';
+                this.lastUpdated = new Date().toLocaleTimeString() + ' ' + mockDataText;
+              }
+            });
+        },
+        
+        // 设备控制防抖函数
+        debounce: function(fn, delay, deviceId) {
+          clearTimeout(this.debounceTimers[deviceId]);
+          this.debounceTimers[deviceId] = setTimeout(fn, delay);
+        },
+        
+        // 控制设备函数
+        controlDevice: function(deviceId, parameter, value) {
+          // 设置防抖，禁用按钮
+          this.deviceControlDisabled[deviceId] = true;
+          this.controlFeedback[deviceId] = this.$t('processing');
+          
+          // 构建控制数据
+          let controlData = {};
+          
+          // 根据设备构建不同的请求格式
+          if (deviceId === 'tv') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} TV`,
+                deviceId: "tv",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                channel: null,
+                volume: null,
+              };
+              // 更新本地状态模拟响应
+              this.statusData.tv.status = value;
+            } else if (parameter === 'channel') {
+              // 确保频道在有效范围
+              value = Math.max(1, Math.min(20, value));
+              controlData = {
+                message: `Set TV channel to ${value}`,
+                deviceId: "tv",
+                status: "on",
+                action: "turn_on",
+                channel: value,
+                volume: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.tv.channel = value;
+            } else if (parameter === 'volume') {
+              // 确保音量在有效范围
+              value = Math.max(0, Math.min(100, value));
+              controlData = {
+                message: `Set TV volume to ${value}`,
+                deviceId: "tv",
+                status: "on",
+                action: "turn_on",
+                channel: null,
+                volume: value
+              };
+              // 更新本地状态模拟响应
+              this.statusData.tv.volume = value;
+            }
+          } else if (deviceId === 'light') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} light`,
+                deviceId: "light",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                brightness: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.light.status = value;
+            } else if (parameter === 'brightness') {
+              // 确保亮度在有效范围内
+              value = Math.max(1, Math.min(5, value));
+              controlData = {
+                message: `Set light brightness to ${value}`,
+                deviceId: "light",
+                status: "on",
+                action: "turn_on",
+                brightness: value
+              };
+              // 更新本地状态模拟响应
+              this.statusData.light.brightness = value;
+            }
+          } else if (deviceId === 'humidifier') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} humidifier`,
+                deviceId: "humidifier",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                level: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.humidifier.status = value;
+            } else if (parameter === 'level') {
+              // 确保湿度级别在有效范围内
+              value = Math.max(1, Math.min(5, value));
+              controlData = {
+                message: `Set humidifier level to ${value}`,
+                deviceId: "humidifier",
+                status: "on",
+                action: "turn_on",
+                level: value
+              };
+              // 更新本地状态模拟响应
+              this.statusData.humidifier.level = value;
+            }
+          } else if (deviceId === 'ac') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} air conditioner`,
+                deviceId: "ac",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                temperature: null,
+                mode: null,
+                fanSpeed: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.airConditioner.status = value;
+            } else if (parameter === 'temperature') {
+              // 确保温度在有效范围内
+              value = Math.max(16, Math.min(30, value));
+              controlData = {
+                message: `Set AC temperature to ${value}°C`,
+                deviceId: "ac",
+                status: "on",
+                action: "turn_on",
+                temperature: value,
+                mode: null,
+                fanSpeed: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.airConditioner.temperature = value;
+            } else if (parameter === 'mode') {
+              controlData = {
+                message: `Set AC mode to ${value}`,
+                deviceId: "ac",
+                status: "on",
+                action: "turn_on",
+                temperature: null,
+                mode: value,
+                fanSpeed: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.airConditioner.mode = value;
+            } else if (parameter === 'fanSpeed') {
+              controlData = {
+                message: `Set AC fan speed to ${value}`,
+                deviceId: "ac",
+                status: "on",
+                action: "turn_on",
+                temperature: null,
+                mode: null,
+                fanSpeed: value
+              };
+              // 更新本地状态模拟响应
+              this.statusData.airConditioner.fanSpeed = value;
+            }
+          } else if (deviceId === 'smartCurtains') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} smart curtains`,
+                deviceId: "SmartCurtains",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                openPercentage: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.smartCurtains.status = value;
+            } else if (parameter === 'openPercentage') {
+              // 确保开启百分比在有效范围内
+              value = Math.max(0, Math.min(100, value));
+              controlData = {
+                message: `Set curtains open percentage to ${value}%`,
+                deviceId: "SmartCurtains",
+                status: "on",
+                action: "turn_on",
+                openPercentage: value
+              };
+              // 更新本地状态模拟响应
+              this.statusData.smartCurtains.openPercentage = value;
+            }
+          } else if (deviceId === 'airPurifier') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} air purifier`,
+                deviceId: "airPurifier",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                mode: null,
+                fanSpeed: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.airPurifier.status = value;
+            } else if (parameter === 'mode') {
+              controlData = {
+                message: `Set air purifier mode to ${value}`,
+                deviceId: "airPurifier",
+                status: "on",
+                action: "turn_on",
+                mode: value,
+                fanSpeed: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.airPurifier.mode = value;
+            } else if (parameter === 'fanSpeed') { 
+              controlData = {
+                message: `Set air purifier fan speed to ${value}`,
+                deviceId: "airPurifier",
+                status: "on",
+                action: "turn_on",
+                mode: this.statusData.airPurifier.mode,
+                fanSpeed: value
+              };
+              this.statusData.airPurifier.fanSpeed = value;
+            }
+          } else if (deviceId === 'robotVacuum') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} robot vacuum`,
+                deviceId: "robotVacuum",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                cleaningMode: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.robotVacuum.status = value;
+            } else if (parameter === 'cleaningMode') {
+              controlData = {
+                message: `Set robot vacuum cleaning mode to ${value}`,
+                deviceId: "robotVacuum",
+                status: "on",
+                action: "turn_on",
+                cleaningMode: value
+              };
+              this.statusData.robotVacuum.cleaningMode = value;
+            }
+          } else if (deviceId === 'coffeeMachine') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} coffee machine`,
+                deviceId: "coffeeMachine",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                brewMode: null
+              };
+              // 更新本地状态模拟响应
+              this.statusData.coffeeMachine.status = value;
+            } else if (parameter === 'brewMode') {
+              controlData = {
+                message: `Set coffee machine brew mode to ${value}`,
+                deviceId: "coffeeMachine",
+                status: "on",
+                action: "turn_on",
+                brewMode: value
+              };
+              // 更新本地状态模拟响应
+              this.statusData.coffeeMachine.brewMode = value;
+            } 
+          }
+          
+          // 使用防抖延迟发送请求
+          this.debounce(() => {
+            // 决定发送到哪个微服务URL
+            const url = this.deviceUrls[deviceId];
+            
+            // 如果在模拟模式下，只更新UI状态
+            if (this.useMockData) {
+              // 模拟成功响应
+              setTimeout(() => {
+                this.controlFeedback[deviceId] = `${this.$t('success')}: ${controlData.message}`;
+                // 清除反馈并启用按钮
+                setTimeout(() => {
+                  this.controlFeedback[deviceId] = '';
+                  this.deviceControlDisabled[deviceId] = false;
+                }, 1500);
+              }, 500);
+              return;
+            }
+            
+            // 发送实际请求到设备微服务
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(controlData)
+            })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error(`Failed with status: ${response.status}`);
+                }
+                return response.json();
+              })
+              .then(data => {
+                this.controlFeedback[deviceId] = `${this.$t('success')}: ${controlData.message}`;
+                // 刷新所有设备状态
+                this.fetchStatus();
+              })
+              .catch(err => {
+                this.controlFeedback[deviceId] = `${this.$t('error')}: ${err.message}`;
+                console.error(`Failed to control ${deviceId}:`, err);
+              })
+              .finally(() => {
+                // 清除反馈并启用按钮
+                setTimeout(() => {
+                  this.controlFeedback[deviceId] = '';
+                  this.deviceControlDisabled[deviceId] = false;
+                }, 3000);
+              });
+          }, 300, deviceId); // 300ms防抖
+          
+          // 保存状态到本地存储
+          localStorage.setItem('smartHomeStatus', JSON.stringify(this.statusData));
+        },
+        
+        // 发送命令--规则指令点击确认后不跳转版本（似乎也不执行操作）
+        sendCommand: function() {
+          if (!this.command.trim()) return;
+          
+          this.commandLoading = true;
+          this.commandResult = '';
+          this.commandSuccess = true;
+          
+          // 清除之前的结果
+          this.intentResult = null;
+          this.intentSummary = '';
+          this.awaitingConfirmation = false;
+          
+          // 加载消息
+          const loadingMessages = this.$i18n.locale === 'en' ? 
+            [ '🧠 Thinking hard... Maybe I need coffee ☕️',
+            '🤖 Analyzing your command...',
+            '🧠 Understanding your intent... please wait...',
+            '📡 AI: Hmm...',
+            '🐢 Processing… but like, with turtle speed today…',
+            '😵‍💫 AI is scratching its virtual head...',
+            '🤯 Decoding human language… brb with logic!',] : 
+            [ '🧠 思考中... 也许我需要喝杯咖啡 ☕️',
+            '🤖 分析您的指令...',
+            '🧠 理解您的意图... 请稍候...',
+            '📡 AI：嗯...',
+            '🐢 处理中… 今天有点慢…',
+            '😵‍💫 AI正在挠头...',
+            '🤯 解码人类语言… 很快给您逻辑！',];
+          
+          // 每2秒切换消息
+          let index = 0;
+          const thinkingInterval = setInterval(() => {
+            this.commandResult = loadingMessages[index % loadingMessages.length];
+            index++;
+          }, 1000);
+          
+          if (this.useMockData) {
+            // 模拟发送命令
+            setTimeout(() => {
+              clearInterval(thinkingInterval); 
+              this.commandResult = this.$i18n.locale === 'en' ? 
+                `Command received: ${this.command}` : 
+                `收到指令: ${this.command}`;
+              this.commandSuccess = true;
+              this.commandLoading = false;
+              this.command = '';
+            }, 1000);
+            return;
+          }
+          
+          // 使用fetch API发送命令
+          fetch('http://127.0.0.1:8080/command', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userInstruction: this.command })
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then(data => {
+              console.log('FULL /command response =', data);
+              console.log('intent_result =', data.intent_result);
+              console.log('rule_payload =', data.rule_payload);
+              console.log('summary =', data.summary);
+
+              // 先清空旧数据，避免上一次残留
+              this.intentResult = null;
+              this.rulePayload = null;
+              this.intentSummary = '';
+
+              // 再根据返回内容赋值
+              if (data.intent_result) {
+                this.intentResult = data.intent_result;
+              }
+
+              if (data.rule_payload) {
+                this.rulePayload = data.rule_payload;
+              }
+
+              this.intentSummary = data.summary || '';
+
+              // 只有在没有报错，并且确实拿到了可确认内容时，才显示确认按钮
+              if (!data.allError && (this.intentResult || this.rulePayload)) {
+                this.awaitingConfirmation = true;
+              } else {
+                this.awaitingConfirmation = false;
+              }
+
+              this.commandResult = `${this.$t('aiSuggests')}: "${this.intentSummary}"`;
+            })
+            .catch(err => {
+              this.commandResult = this.$i18n.locale === 'en' ? 
+                `Failed: ${err.message}` : 
+                `失败: ${err.message}`;
+              this.commandSuccess = false;
+            })
+            .finally(() => {
+              clearInterval(thinkingInterval);
+              this.commandLoading = false;
+            });
+        },
+
+
+        
+
+
+        startRecording() {
+            if (this.voiceBusy) {
+                this.commandSuccess = false;
+                this.commandResult = this.$i18n.locale === 'en'
+                ? 'Please wait, voice service is busy.'
+                : '请稍候，语音服务正在处理中。';
+                return;
+            }
+
+            if (this.isRecording) {
+                this.commandSuccess = false;
+                this.commandResult = this.$i18n.locale === 'en'
+                ? 'Recording is already in progress.'
+                : '已经在录音中了。';
+                return;
+            }
+
+            this.voiceBusy = true;
+
+            fetch('http://127.0.0.1:5001/startRecording', {
+                method: 'POST'
+            })
+                .then(async response => {
+                  const data = await response.json().catch(() => ({}));
+                  if (!response.ok) {
+                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                  }
+                  return data;
+                })
+                .then(data => {
+                    console.log('开始录音成功', data);
+                    this.isRecording = true;
+                    this.commandSuccess = true;
+                    this.commandResult = this.$i18n.locale === 'en'
+                        ? 'Recording...'
+                        : '正在录音...';
+                })
+                .catch(err => {
+                  console.error('开始录音失败', err);
+                  this.isRecording = false;
+                  this.commandSuccess = false;
+                  this.commandResult = this.$i18n.locale === 'en'
+                    ? `Start recording failed: ${err.message}`
+                    : `开始录音失败: ${err.message}`;
+                })
+                .finally(() => {
+                    this.voiceBusy = false;
+                });
+        },
+
+        
+
+        stopRecording() {
+            if (this.voiceBusy) {
+                this.commandSuccess = false;
+                this.commandResult = this.$i18n.locale === 'en'
+                ? 'Please wait, voice service is busy.'
+                : '请稍候，语音服务正在处理中。';
+                return;
+            }
+
+            if (!this.isRecording) {
+                this.commandSuccess = false;
+                this.commandResult = this.$i18n.locale === 'en'
+                ? 'Recording has not started yet.'
+                : '当前还没有开始录音。';
+                return;
+            }
+
+            this.voiceBusy = true;
+            this.commandSuccess = true;
+            this.commandResult = this.$i18n.locale === 'en'
+                ? 'Transcribing...'
+                : '正在识别语音...';
+
+            fetch('http://127.0.0.1:5001/stopRecording', {
+                method: 'POST'
+            })
+                .then(async response => {
+                  const data = await response.json().catch(() => ({}));
+                  if (!response.ok) {
+                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                  }
+                  return data;
+               })
+                .then(data => {
+                    console.log('结束录音成功', data);
+                    const recognizedText = (data.recognizedText || '').trim();
+                    this.isRecording = false;
+
+                    if (!recognizedText) {
+                        this.commandSuccess = false;
+                        this.commandResult = this.$i18n.locale === 'en'
+                        ? 'No speech was recognized. Please try again.'
+                        : '没有识别到语音内容，请再试一次。';
+                        return;
+                    }
+
+                    this.command = recognizedText;
+                    this.commandSuccess = true;
+                    this.commandResult = this.$i18n.locale === 'en'
+                        ? 'Speech recognition completed, please click Send.'
+                        : '语音识别完成，请点击发送指令。';
+                })
+                .catch(err => {
+                  console.error('停止录音失败', err);
+                  this.isRecording = false;
+                  this.commandSuccess = false;
+                  this.commandResult = this.$i18n.locale === 'en'
+                    ? `Stop recording failed: ${err.message}`
+                    : `停止录音失败: ${err.message}`;
+                })
+                .finally(() => {
+                this.voiceBusy = false;
+                });
+        },
+        
+        confirmIntent: function () {
+          console.log('confirm intentResult =', this.intentResult);
+          console.log('confirm rulePayload =', this.rulePayload);
+
+          // 规则类确认
+          if (this.rulePayload) {
+            const plainRulePayload = JSON.parse(JSON.stringify(this.rulePayload));
+            console.log('发送到 /confirm-rule 的 plainRulePayload =', plainRulePayload);
+
+            fetch('http://127.0.0.1:8080/confirm-rule', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ rule_payload: plainRulePayload })
+            })
+              .then(async response => {
+                const data = await response.json().catch(() => ({}));
+                console.log('confirm-rule response =', data);
+
+                if (!response.ok) {
+                  throw new Error(data.error || `Rule creation failed! status: ${response.status}`);
+                }
+
+                if (data.rule_engine_status !== 201 || !data.rule_engine_response || !data.rule_engine_response.rule) {
+                  throw new Error('rule-engine 没有真正创建成功');
+                }
+
+                return data;
+              })
+              .then(data => {
+                this.commandResult = `✅ ${this.$i18n.locale === 'en' ? 'Rule created successfully' : '规则创建成功'}`;
+                this.commandSuccess = true;
+                this.fetchStatus();
+              })
+              .catch(err => {
+                console.error('confirm rule failed:', err);
+                this.commandResult = `❌ ${this.$i18n.locale === 'en' ? '规则创建失败' : '规则创建失败'}: ${err.message}`;
+                this.commandSuccess = false;
+              })
+              .finally(() => {
+                this.awaitingConfirmation = false;
+                this.intentResult = null;
+                this.rulePayload = null;
+                this.intentSummary = '';
+              });
+
+            return;
+          }
+
+          // 普通控制类确认
+          if (!this.intentResult || !this.intentResult.results) {
+            this.commandResult = `❌ ${this.$i18n.locale === 'en' ? 'Missing intent result' : '缺少意图结果'}`;
+            this.commandSuccess = false;
+            this.awaitingConfirmation = false;
+            return;
+          }
+
+          fetch('http://127.0.0.1:8080/execute-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ results: this.intentResult.results })
+          })
+            .then(response => {
+              if (!response.ok) throw new Error(`Execution failed! status: ${response.status}`);
+              return response.json();
+            })
+            .then(data => {
+              this.commandResult = `✅ ${this.$t('executeSuccess')}`;
+              this.commandSuccess = true;
+              this.fetchStatus();
+            })
+            .catch(err => {
+              this.commandResult = `❌ ${this.$t('executeFail')}: ${err.message}`;
+              this.commandSuccess = false;
+            })
+            .finally(() => {
+              this.awaitingConfirmation = false;
+              this.intentResult = null;
+              this.rulePayload = null;
+              this.intentSummary = '';
+            });
+        },
+
+
+        // confirmIntent: function () {
+        //     console.log('confirm intentResult =', this.intentResult);
+        //     console.log('confirm rulePayload =', this.rulePayload);
+        //     console.log('confirm intentSummary =', this.intentSummary);
+
+        //     // 规则类：后端已经返回了 rule_payload
+        //     if (this.rulePayload) {
+        //         console.log('rulePayload to backend =', JSON.stringify(this.rulePayload, null, 2));
+
+        //         // 🔥 转换格式（非常关键）
+        //         const payload = {
+        //             id: 'rule_' + Date.now(),
+        //             trigger: this.rulePayload.trigger,
+        //             action: {
+        //                 deviceId: this.rulePayload.action.deviceId,
+        //                 action: 'control',
+        //                 parameters: this.rulePayload.action
+        //             },
+        //             active: true
+        //         };
+
+        //         fetch('http://127.0.0.1:8080/rules', {
+        //             method: 'POST',
+        //             headers: { 'Content-Type': 'application/json' },
+        //             body: JSON.stringify(payload)
+        //         })
+        //         .then(r => {
+        //             if (!r.ok) throw new Error(`Rule creation failed! status: ${r.status}`);
+        //             return r.json();
+        //         })
+        //         .then(data => {
+        //             console.log('rule created =', data);
+
+        //             this.commandResult = `✅ ${this.$t('executeSuccess')}`;
+        //             this.commandSuccess = true;
+        //             this.fetchStatus();
+        //         })
+        //         .catch(err => {
+        //             this.commandResult = `❌ ${this.$t('executeFail')}: ${err.message}`;
+        //             this.commandSuccess = false;
+        //         })
+        //         .finally(() => {
+        //             this.awaitingConfirmation = false;
+        //             this.intentResult = null;
+        //             this.rulePayload = null;
+        //             this.intentSummary = '';
+        //         });
+
+        //         return;
+        //     }
+
+        //     // 普通设备控制类
+        //     if (!this.intentResult) {
+        //         this.commandResult = `❌ ${this.$t('executeFail')}: missing intent_result`;
+        //         this.commandSuccess = false;
+        //         this.awaitingConfirmation = false;
+        //         return;
+        //     }
+
+        //     fetch('http://127.0.0.1:8080/execute-intent', {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({ results: this.intentResult.results })
+        //     })
+        //         .then(r => {
+        //             if (!r.ok) throw new Error(`Execution failed! status: ${r.status}`);
+        //             return r.json();
+        //         })
+        //         .then(() => {
+        //             this.commandResult = `✅ ${this.$t('executeSuccess')}`;
+        //             this.commandSuccess = true;
+        //             this.fetchStatus();
+        //         })
+        //         .catch(err => {
+        //             this.commandResult = `❌ ${this.$t('executeFail')}: ${err.message}`;
+        //             this.commandSuccess = false;
+        //         })
+        //         .finally(() => {
+        //             this.awaitingConfirmation = false;
+        //             this.intentResult = null;
+        //             this.rulePayload = null;
+        //             this.intentSummary = '';
+        //         });   
+        // },
+
+
+
+        // 取消意图
+        // cancelIntent: function () {
+        //   this.commandResult = `❎ ${this.$t('instructionCanceled')}`;
+        //   this.intentResult = null;
+        //   this.intentSummary = '';
+        //   this.awaitingConfirmation = false;
+        //   this.command = '';
+        // }
+
+        //新加的
+        cancelIntent: function () {
+            this.commandResult = `❎ ${this.$t('instructionCanceled')}`;
+            this.intentResult = null;
+            this.intentSummary = '';
+            this.awaitingConfirmation = false;
+            this.command = '';
+            this.commandLoading = false;
+        }
+
+      },
+      computed: {
+        // 本地化空调模式名称
+        getACModeNameLocalized: function() {
+          const mode = this.statusData.airConditioner.mode;
+          if (mode === 'cool') return this.$t('cool');
+          if (mode === 'heat') return this.$t('heat');
+          return mode || 'unknown';
+        },
+        // 本地化风速名称
+        getFanSpeedNameLocalized: function() {
+          const speed = this.statusData.airConditioner.fanSpeed;
+          if (speed === 'low') return this.$t('low');
+          if (speed === 'medium') return this.$t('medium');
+          if (speed === 'high') return this.$t('high');
+          return speed || 'unknown';
+        }
+      },
+      mounted: function() {
+        // 检查保存的语言偏好
+        const savedLanguage = localStorage.getItem('preferredLanguage');
+        if (savedLanguage) {
+          this.$i18n.locale = savedLanguage;
+        } else {
+          // 根据浏览器语言自动选择
+          const browserLang = navigator.language || navigator.userLanguage;
+          if (browserLang.startsWith('zh')) {
+            this.$i18n.locale = 'zh';
+          }
+        }
+        
+        // 获取设备状态
+        this.fetchStatus();
+        
+        // 设置定时器每5秒刷新一次
+        this.intervalId = setInterval(this.fetchStatus, 5000);
+      },
+      beforeDestroy: function() {
+        // 清除定时器
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
