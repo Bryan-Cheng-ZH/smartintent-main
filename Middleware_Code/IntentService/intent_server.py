@@ -176,7 +176,8 @@ def call_deepseek(user_instruction, current_state):
     full_prompt = PROMPT_TEMPLATE + f"\n\nInput:\n{{\n  \"userInstruction\": \"{user_instruction}\",\n  \"current_state\": {current_state}\n}}"
     
     response = client.chat.completions.create(
-        model="Qwen/Qwen2.5-14B-Instruct",
+        # model="Qwen/Qwen2.5-14B-Instruct",
+        model="deepseek-chat",
         messages=[{"role": "user", "content": full_prompt}],
         temperature=0.3,
         max_tokens=800
@@ -216,6 +217,8 @@ def get_intent():
         try:
             result_json = json.loads(result_text)
             if "rule" in result_json:
+                print("===== NEW GET-INTENT RULE BRANCH =====")
+                print("This version should NOT save to Mongo before confirmation")
                 print("[LLM Results_json]:", result_json)
                 rule_id = f"rule_{int(time.time())}"  # 生成唯一 ID
                 rule_payload = {
@@ -225,16 +228,16 @@ def get_intent():
                     "active": True
                 }
                 # 存入 rule-engine
-                try:
-                    rule_resp = requests.post("http://rule-engine.default/rules", json=rule_payload)
-                    print("✅ Rule has been written to MongoDB:", rule_resp.json())
-                except Exception as e:
-                    print("❌ Failed to write the rule to MongoDC:", str(e))
+                # try:
+                #     rule_resp = requests.post("http://rule-engine.default/rules", json=rule_payload)
+                #     print("✅ Rule has been written to MongoDB:", rule_resp.json())
+                # except Exception as e:
+                #     print("❌ Failed to write the rule to MongoDC:", str(e))
 
                 return jsonify({
                     "LLM_result":result_text,
-                    "rule_payload": {"rule": rule_payload},
-                    "summary": f"✅ Rule has been created：When {rule_payload['trigger']['sensor']} {rule_payload['trigger']['operator']} {rule_payload['trigger']['value']} ，Automatically execute {rule_payload['action']['deviceId']} control。",
+                    "rule_payload": rule_payload,
+                    "summary": f"✅ It's suggested to created the rule：When {rule_payload['trigger']['sensor']} {rule_payload['trigger']['operator']} {rule_payload['trigger']['value']} ，Automatically execute {rule_payload['action']['deviceId']} control。",
                     "allError": False
                 })
         except Exception as e:
@@ -257,6 +260,58 @@ def get_intent():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
+@app.route('/confirm-rule', methods=['POST'])
+def confirm_rule():
+    try:
+        data = request.get_json()
+        print("===== /confirm-rule called =====")
+        print("Received data:", data)
+
+        if not data:
+            return jsonify({"error": "No JSON body received"}), 400
+
+        rule_payload = data.get("rule_payload")
+        print("rule_payload:", rule_payload)
+
+        if not rule_payload:
+            return jsonify({"error": "rule_payload is required"}), 400
+
+        if not rule_payload.get("id") or not rule_payload.get("trigger") or not rule_payload.get("action"):
+            return jsonify({"error": "rule_payload missing required fields"}), 400
+
+        rule_resp = requests.post(
+            "http://rule-engine.default/rules",
+            json=rule_payload,
+            timeout=10
+        )
+
+        print("rule-engine status:", rule_resp.status_code)
+        print("rule-engine text:", rule_resp.text)
+
+        try:
+            rule_engine_response = rule_resp.json()
+        except Exception:
+            rule_engine_response = {"raw_text": rule_resp.text}
+
+        if rule_resp.status_code not in [200, 201]:
+            return jsonify({
+                "error": "rule-engine failed to save rule",
+                "rule_engine_status": rule_resp.status_code,
+                "rule_engine_response": rule_engine_response
+            }), rule_resp.status_code
+
+        return jsonify({
+            "message": "Rule saved successfully",
+            "rule_engine_status": rule_resp.status_code,
+            "rule_engine_response": rule_engine_response
+        }), 201
+
+    except Exception as e:
+        print("confirm_rule exception:", str(e))
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/execute-intent', methods=['POST'])
 def execute_intent():
     data = request.get_json()

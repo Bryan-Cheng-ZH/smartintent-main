@@ -36,6 +36,12 @@ const proxyServer = http.createServer((req, res) => {
     hostname = 'intent-server.default';
     //port = 5050;
     path = '/execute-intent';
+  } else if (url === '/confirm-rule') {
+    hostname = 'intent-server.default';
+    path = '/confirm-rule';
+  } else if (url === '/rules') {
+    hostname = 'rule-engine.default';
+    path = '/rules';
   }
     
   else if (url.startsWith('/tv')) {
