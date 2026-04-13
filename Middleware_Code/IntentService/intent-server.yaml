@@ -7,6 +7,9 @@ spec:
   template:
     spec:
       containers:
-        - image: docker.io/wangjiayue123/intent-server:v7
+        # - image: docker.io/wangjiayue123/intent-server:v7
+        - image: docker.io/cczhh/intent-server:v1
+        # - image: intent-server:local
+        #   imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5050

@@ -42,8 +42,16 @@ const proxyServer = http.createServer((req, res) => {
   } else if (url === '/rules') {
     hostname = 'rule-engine.default';
     path = '/rules';
+  } else if (url === '/startRecording') {//新加的
+    //hostname = 'intent-server.default';
+    hostname = 'recorder-service.default';
+    path = '/startRecording';
+  } else if (url === '/stopRecording') {
+    //hostname = 'intent-server.default';
+    hostname = 'recorder-service.default';
+    path = '/stopRecording';
   }
-    
+
   else if (url.startsWith('/tv')) {
     hostname = 'tv-microservice.default';
     path = url;

@@ -160,7 +160,7 @@ def start_recording():
             dtype="float32",
             callback=audio_callback,
         )
-        stream.start()
+        # stream.start()
     except Exception as e:
         append_log("stderr", f"Failed to start microphone: {repr(e)}")
         return jsonify({"error": "Failed to start microphone.", "details": repr(e)}), 500
@@ -170,6 +170,8 @@ def start_recording():
         audio_chunks = []
         is_recording = True
         recording_started_at = time.time()
+
+        stream.start()
 
     append_log("stdout", "Recording started.")
     return jsonify(
@@ -292,4 +294,6 @@ def voice_debug():
 
 if __name__ == "__main__":
     preload_model()
-    app.run(host="127.0.0.1", port=5001, debug=True)
+    # app.run(host="127.0.0.1", port=5001, debug=True)
+    # app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=False, use_reloader=False)

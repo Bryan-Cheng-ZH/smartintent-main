@@ -49,7 +49,7 @@ User speaks to smartwatch:
 ```
 
 - Wear OS provides built-in speech recognition (free-form input)
-- No need to implement ASR manually
+<!-- - No need to implement ASR manually -->
 
 ---
 
@@ -312,26 +312,3 @@ Web + Smartwatch Input → Backend → UI
 
 ---
 
-## 11. Key Insight
-
-The goal is NOT:
-
-> "Control devices using a smartwatch"
-
-The real contribution is:
-
-> Evaluating how LLM + prompt engineering handles short, ambiguous, real-world inputs
-
----
-
-## 12. Conclusion
-
-By integrating smartwatch input:
-
-- The system becomes more realistic
-- The dataset becomes more challenging
-- The evaluation becomes more meaningful
-
-This directly supports the research objective:
-
-> Improving reliability of intent-based smart home automation

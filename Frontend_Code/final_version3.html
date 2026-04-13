@@ -1017,6 +1017,20 @@
       locale: 'en', // Default locale
       messages,
     });
+    //新加的
+    // const HOST = window.location.hostname;
+    // const API_8080 = `http://${HOST}:8080`;
+    // const API_5001 = `http://${HOST}:5001`;
+    // const API_BASE = 'https://api.smartintent.org';
+    // const API_8080 = API_BASE;
+
+    // // 录音接口先保留本地，后面再决定
+    // const HOST = window.location.hostname;
+    // const API_5001 = `http://${HOST}:5001`; 
+    const API_BASE = 'https://api.smartintent.org';
+    const API_8080 = API_BASE;
+    // const API_5001 = API_BASE;
+    const API_5001 = 'https://voice.smartintent.org'; 
 
     // Fixed mock data
     const mockData = {
@@ -1087,15 +1101,35 @@
         },
         
         // 设备微服务URLs
+        // deviceUrls: {
+        //   ac: "http://127.0.0.1:8080/ac/control",
+        //   light: "http://127.0.0.1:8080/light/control",
+        //   tv: "http://127.0.0.1:8080/tv/control",
+        //   humidifier: "http://127.0.0.1:8080/humidifier/control",
+        //   coffeeMachine: "http://127.0.0.1:8080/coffee/control",
+        //   smartCurtains: "http://127.0.0.1:8080/curtains/control",
+        //   robotVacuum: "http://127.0.0.1:8080/robot/control",
+        //   airPurifier: "http://127.0.0.1:8080/airpurifier/control"
+        // },
+        // deviceUrls: {
+        //     ac: "http://172.20.10.4:8080/ac/control",
+        //     light: "http://172.20.10.4:8080/light/control",
+        //     tv: "http://172.20.10.4:8080/tv/control",
+        //     humidifier: "http://172.20.10.4:8080/humidifier/control",
+        //     coffeeMachine: "http://172.20.10.4:8080/coffee/control",
+        //     smartCurtains: "http://172.20.10.4:8080/curtains/control",
+        //     robotVacuum: "http://172.20.10.4:8080/robot/control",
+        //     airPurifier: "http://172.20.10.4:8080/airpurifier/control"
+        // },
         deviceUrls: {
-          ac: "http://127.0.0.1:8080/ac/control",
-          light: "http://127.0.0.1:8080/light/control",
-          tv: "http://127.0.0.1:8080/tv/control",
-          humidifier: "http://127.0.0.1:8080/humidifier/control",
-          coffeeMachine: "http://127.0.0.1:8080/coffee/control",
-          smartCurtains: "http://127.0.0.1:8080/curtains/control",
-          robotVacuum: "http://127.0.0.1:8080/robot/control",
-          airPurifier: "http://127.0.0.1:8080/airpurifier/control"
+              ac: `${API_8080}/ac/control`,
+              light: `${API_8080}/light/control`,
+              tv: `${API_8080}/tv/control`,
+              humidifier: `${API_8080}/humidifier/control`,
+              coffeeMachine: `${API_8080}/coffee/control`,
+              smartCurtains: `${API_8080}/curtains/control`,
+              robotVacuum: `${API_8080}/robot/control`,
+              airPurifier: `${API_8080}/airpurifier/control`
         },
         // 设备控制计时器
         debounceTimers: {
@@ -1147,7 +1181,10 @@
           
           this.error = null;
           
-          fetch('http://127.0.0.1:8080/all-status')
+          // fetch('http://127.0.0.1:8080/all-status')
+          //fetch('http://172.20.10.4:8080/all-status')
+          fetch(`${API_8080}/all-status`)
+          //fetch('https://api.smartintent.org/all-status')
             .then(response => {
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -1542,7 +1579,9 @@
           }
           
           // 使用fetch API发送命令
-          fetch('http://127.0.0.1:8080/command', {
+          // fetch('http://127.0.0.1:8080/command', {
+            // fetch('http://172.20.10.4:8080/command', {
+          fetch(`${API_8080}/command`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -1621,7 +1660,9 @@
 
             this.voiceBusy = true;
 
-            fetch('http://127.0.0.1:5001/startRecording', {
+            // fetch('http://127.0.0.1:5001/startRecording', {
+            //fetch('http://172.20.10.4:5001/stopRecording', {
+              fetch(`${API_5001}/startRecording`, {
                 method: 'POST'
             })
                 .then(async response => {
@@ -1677,7 +1718,9 @@
                 ? 'Transcribing...'
                 : '正在识别语音...';
 
-            fetch('http://127.0.0.1:5001/stopRecording', {
+            // fetch('http://127.0.0.1:5001/stopRecording', {
+            //fetch('http://172.20.10.4:5001/startRecording', {
+            fetch(`${API_5001}/stopRecording`, {
                 method: 'POST'
             })
                 .then(async response => {
@@ -1728,7 +1771,9 @@
             const plainRulePayload = JSON.parse(JSON.stringify(this.rulePayload));
             console.log('发送到 /confirm-rule 的 plainRulePayload =', plainRulePayload);
 
-            fetch('http://127.0.0.1:8080/confirm-rule', {
+            // fetch('http://127.0.0.1:8080/confirm-rule', {
+            //fetch('http://172.20.10.4:8080/confirm-rule', {
+            fetch(`${API_8080}/confirm-rule`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ rule_payload: plainRulePayload })
@@ -1813,7 +1858,9 @@
             return;
           }
 
-          fetch('http://127.0.0.1:8080/execute-intent', {
+          // fetch('http://127.0.0.1:8080/execute-intent', {
+          //fetch('http://172.20.10.4:8080/execute-intent', {
+          fetch(`${API_8080}/execute-intent`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ results: this.intentResult.results })
