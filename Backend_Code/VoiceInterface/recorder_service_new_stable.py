@@ -5,6 +5,9 @@ import os
 import threading
 import time
 from typing import List, Optional
+# 新加的
+import tempfile
+import subprocess
 
 import numpy as np
 import sounddevice as sd
@@ -270,6 +273,162 @@ def stop_recording():
         }
     )
 
+#new
+@app.route("/transcribe", methods=["POST"])
+def transcribe_audio():
+    global recognized_text, last_audio_seconds, last_stdout, last_stderr
+
+    with state_lock:
+        recognized_text = ""
+        last_stdout = ""
+        last_stderr = ""
+        last_audio_seconds = 0.0
+
+    if not model_ready:
+        if model_loading_error:
+            return jsonify(
+                {
+                    "error": "Model is not ready.",
+                    "details": model_loading_error,
+                    "model": MODEL_NAME,
+                    "language": LANGUAGE,
+                }
+            ), 500
+        return jsonify(
+            {
+                "error": "Model is still warming up.",
+                "model": MODEL_NAME,
+                "language": LANGUAGE,
+            }
+        ), 503
+
+    if "audio" not in request.files:
+        return jsonify({"error": "Missing audio file field: audio"}), 400
+
+    file = request.files["audio"]
+
+    if not file or not file.filename:
+        return jsonify({"error": "No audio file uploaded."}), 400
+
+    temp_input_path = None
+    temp_wav_path = None
+
+    try:
+        # with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_input:
+        #     file.save(temp_input)
+        #     temp_input_path = temp_input.name
+        original_ext = os.path.splitext(file.filename)[1] or ".webm"
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=original_ext) as temp_input:
+            file.save(temp_input)
+            temp_input_path = temp_input.name
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_wav:
+            temp_wav_path = temp_wav.name
+
+        cmd = [
+            "ffmpeg",
+            "-y",
+            "-i", temp_input_path,
+            "-ar", str(SAMPLE_RATE),
+            "-ac", str(CHANNELS),
+            "-f", "wav",
+            temp_wav_path
+        ]
+
+        subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True
+        )
+
+        append_log("stdout", "Audio file converted by ffmpeg successfully.")
+
+        import wave
+
+        with wave.open(temp_wav_path, "rb") as wf:
+            n_channels = wf.getnchannels()
+            sampwidth = wf.getsampwidth()
+            framerate = wf.getframerate()
+            n_frames = wf.getnframes()
+            raw_data = wf.readframes(n_frames)
+
+        if sampwidth != 2:
+            return jsonify({"error": f"Unsupported sample width: {sampwidth}"}), 400
+
+        audio = np.frombuffer(raw_data, dtype=np.int16).astype(np.float32) / 32768.0
+
+        if n_channels > 1:
+            audio = audio.reshape(-1, n_channels).mean(axis=1)
+
+        last_audio_seconds = len(audio) / float(framerate)
+        append_log("stdout", f"Uploaded audio length: {last_audio_seconds:.2f}s")
+
+        transcribe_language = resolve_language()
+        append_log("stdout", f"Transcribe language mode: {transcribe_language or 'auto'}")
+
+        segments, info = model.transcribe(
+            audio,
+            language=transcribe_language,
+            vad_filter=True,
+            beam_size=5,
+            condition_on_previous_text=False,
+            initial_prompt="智能家居语音指令，常见词包括：打开，关闭，客厅，卧室，空调，灯，窗帘，电视，加湿器。",
+        )
+
+        recognized_text = extract_text(segments)
+
+        detected_language = getattr(info, "language", None)
+        detected_probability = getattr(info, "language_probability", None)
+
+        if detected_language in ("zh", "zh-cn", "zh-tw"):
+            recognized_text = to_simplified(recognized_text)
+
+        append_log(
+            "stdout",
+            f"Transcription finished. text={recognized_text!r}, detected_language={detected_language}, probability={detected_probability}",
+        )
+
+        return jsonify(
+            {
+                "recognizedText": recognized_text,
+                "stdout": last_stdout,
+                "stderr": last_stderr,
+                "audioSeconds": round(last_audio_seconds, 2),
+                "model": MODEL_NAME,
+                "language": LANGUAGE,
+            }
+        )
+
+    except subprocess.CalledProcessError as e:
+        append_log("stderr", f"ffmpeg convert failed: {e.stderr.decode(errors='ignore')}")
+        return jsonify(
+            {
+                "error": "Audio conversion failed.",
+                "stdout": last_stdout,
+                "stderr": last_stderr,
+            }
+        ), 500
+
+    except Exception as e:
+        append_log("stderr", f"Transcription failed: {repr(e)}")
+        return jsonify(
+            {
+                "error": "Transcription failed.",
+                "details": repr(e),
+                "stdout": last_stdout,
+                "stderr": last_stderr,
+            }
+        ), 500
+
+    finally:
+        for path in [temp_input_path, temp_wav_path]:
+            if path and os.path.exists(path):
+                try:
+                    os.remove(path)
+                except Exception:
+                    pass
 
 @app.route("/voiceDebug", methods=["GET"])
 def voice_debug():

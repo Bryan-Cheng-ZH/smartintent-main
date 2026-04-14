@@ -1062,6 +1062,9 @@
         // 新加的
         isRecording: false,
         voiceBusy: false,
+        mediaRecorder: null,
+        mediaStream: null,
+        audioChunks: [],
 
         lastUpdated: new Date().toLocaleTimeString() + ' (模拟数据)',
         useMockData: false,
@@ -1641,126 +1644,414 @@
         
 
 
-        startRecording() {
-            if (this.voiceBusy) {
-                this.commandSuccess = false;
-                this.commandResult = this.$i18n.locale === 'en'
-                ? 'Please wait, voice service is busy.'
-                : '请稍候，语音服务正在处理中。';
-                return;
-            }
+        // startRecording() {
+        //     if (this.voiceBusy) {
+        //         this.commandSuccess = false;
+        //         this.commandResult = this.$i18n.locale === 'en'
+        //         ? 'Please wait, voice service is busy.'
+        //         : '请稍候，语音服务正在处理中。';
+        //         return;
+        //     }
 
-            if (this.isRecording) {
-                this.commandSuccess = false;
-                this.commandResult = this.$i18n.locale === 'en'
-                ? 'Recording is already in progress.'
-                : '已经在录音中了。';
-                return;
-            }
+        //     if (this.isRecording) {
+        //         this.commandSuccess = false;
+        //         this.commandResult = this.$i18n.locale === 'en'
+        //         ? 'Recording is already in progress.'
+        //         : '已经在录音中了。';
+        //         return;
+        //     }
 
-            this.voiceBusy = true;
+        //     this.voiceBusy = true;
 
-            // fetch('http://127.0.0.1:5001/startRecording', {
-            //fetch('http://172.20.10.4:5001/stopRecording', {
-              fetch(`${API_5001}/startRecording`, {
-                method: 'POST'
-            })
-                .then(async response => {
-                  const data = await response.json().catch(() => ({}));
-                  if (!response.ok) {
-                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
-                  }
-                  return data;
-                })
-                .then(data => {
-                    console.log('开始录音成功', data);
-                    this.isRecording = true;
-                    this.commandSuccess = true;
-                    this.commandResult = this.$i18n.locale === 'en'
-                        ? 'Recording...'
-                        : '正在录音...';
-                })
-                .catch(err => {
-                  console.error('开始录音失败', err);
-                  this.isRecording = false;
-                  this.commandSuccess = false;
-                  this.commandResult = this.$i18n.locale === 'en'
-                    ? `Start recording failed: ${err.message}`
-                    : `开始录音失败: ${err.message}`;
-                })
-                .finally(() => {
-                    this.voiceBusy = false;
-                });
-        },
+        //     // fetch('http://127.0.0.1:5001/startRecording', {
+        //     //fetch('http://172.20.10.4:5001/stopRecording', {
+        //       fetch(`${API_5001}/startRecording`, {
+        //         method: 'POST'
+        //     })
+        //         .then(async response => {
+        //           const data = await response.json().catch(() => ({}));
+        //           if (!response.ok) {
+        //             throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        //           }
+        //           return data;
+        //         })
+        //         .then(data => {
+        //             console.log('开始录音成功', data);
+        //             this.isRecording = true;
+        //             this.commandSuccess = true;
+        //             this.commandResult = this.$i18n.locale === 'en'
+        //                 ? 'Recording...'
+        //                 : '正在录音...';
+        //         })
+        //         .catch(err => {
+        //           console.error('开始录音失败', err);
+        //           this.isRecording = false;
+        //           this.commandSuccess = false;
+        //           this.commandResult = this.$i18n.locale === 'en'
+        //             ? `Start recording failed: ${err.message}`
+        //             : `开始录音失败: ${err.message}`;
+        //         })
+        //         .finally(() => {
+        //             this.voiceBusy = false;
+        //         });
+        // },
+//         startRecording: async function () {
+//   if (this.voiceBusy) {
+//     this.commandSuccess = false;
+//     this.commandResult = this.$i18n.locale === 'en'
+//       ? 'Please wait, voice service is busy.'
+//       : '请稍候，语音服务正在处理中。';
+//     return;
+//   }
+
+//   if (this.isRecording) {
+//     this.commandSuccess = false;
+//     this.commandResult = this.$i18n.locale === 'en'
+//       ? 'Recording is already in progress.'
+//       : '已经在录音中了。';
+//     return;
+//   }
+
+//   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+//     this.commandSuccess = false;
+//     this.commandResult = this.$i18n.locale === 'en'
+//       ? 'This browser does not support microphone recording.'
+//       : '当前浏览器不支持麦克风录音。';
+//     return;
+//   }
+
+//   this.voiceBusy = true;
+
+//   try {
+//     const stream = await navigator.mediaDevices.getUserMedia({
+//       audio: {
+//         echoCancellation: true,
+//         noiseSuppression: true,
+//         autoGainControl: true
+//       }
+//     });
+
+//     this.mediaStream = stream;
+//     this.audioChunks = [];
+//     this.mediaRecorder = new MediaRecorder(stream);
+
+//     this.mediaRecorder.ondataavailable = (event) => {
+//       if (event.data && event.data.size > 0) {
+//         this.audioChunks.push(event.data);
+//       }
+//     };
+
+//     this.mediaRecorder.onstop = async () => {
+//       try {
+//         this.voiceBusy = true;
+//         this.commandSuccess = true;
+//         this.commandResult = this.$i18n.locale === 'en'
+//           ? 'Transcribing...'
+//           : '正在识别语音...';
+
+//         const audioBlob = new Blob(this.audioChunks, {
+//           type: this.mediaRecorder.mimeType || 'audio/webm'
+//         });
+
+//         const formData = new FormData();
+//         formData.append('audio', audioBlob, 'speech.webm');
+
+//         const response = await fetch(`${API_5001}/transcribe`, {
+//           method: 'POST',
+//           body: formData
+//         });
+
+//         const data = await response.json().catch(() => ({}));
+
+//         if (!response.ok) {
+//           throw new Error(data.error || `HTTP error! status: ${response.status}`);
+//         }
+
+//         const recognizedText = (data.recognizedText || data.text || '').trim();
+
+//         if (!recognizedText) {
+//           this.commandSuccess = false;
+//           this.commandResult = this.$i18n.locale === 'en'
+//             ? 'No speech was recognized. Please try again.'
+//             : '没有识别到语音内容，请再试一次。';
+//           return;
+//         }
+
+//         this.command = recognizedText;
+//         this.commandSuccess = true;
+//         this.commandResult = this.$i18n.locale === 'en'
+//           ? 'Speech recognition completed, please click Send.'
+//           : '语音识别完成，请点击发送指令。';
+//       } catch (err) {
+//         console.error('语音识别失败', err);
+//         this.commandSuccess = false;
+//         this.commandResult = this.$i18n.locale === 'en'
+//           ? `Speech recognition failed: ${err.message}`
+//           : `语音识别失败: ${err.message}`;
+//       } finally {
+//           this.isRecording = false;
+//           this.voiceBusy = false;
+
+//           if (this.mediaStream) {
+//             this.mediaStream.getTracks().forEach(track => track.stop());
+//             this.mediaStream = null;
+//           }
+
+//           this.mediaRecorder = null;
+//           this.audioChunks = [];
+//         }
+//           //finally {
+//       //   this.isRecording = false;
+//       //   this.voiceBusy = false;
+
+//       //   if (this.mediaStream) {
+//       //     this.mediaStream.getTracks().forEach(track => track.stop());
+//       //     this.mediaStream = null;
+//       //   }
+//       // }
+//     };
+
+//     this.mediaRecorder.start();
+//     this.isRecording = true;
+//     this.commandSuccess = true;
+//     this.commandResult = this.$i18n.locale === 'en'
+//       ? 'Recording...'
+//       : '正在录音...';
+//   } catch (err) {
+//     console.error('开始录音失败', err);
+//     this.commandSuccess = false;
+//     this.commandResult = this.$i18n.locale === 'en'
+//       ? `Start recording failed: ${err.message}`
+//       : `开始录音失败: ${err.message}`;
+//   } finally {
+//     if (!this.isRecording) {
+//       this.voiceBusy = false;
+//     }
+//   }
+// },
+
+  startRecording: async function () {
+    if (this.voiceBusy) {
+      this.commandSuccess = false;
+      this.commandResult = this.$i18n.locale === 'en'
+        ? 'Please wait, voice service is busy.'
+        : '请稍候，语音服务正在处理中。';
+      return;
+    }
+
+    if (this.isRecording) {
+      this.commandSuccess = false;
+      this.commandResult = this.$i18n.locale === 'en'
+        ? 'Recording is already in progress.'
+        : '已经在录音中了。';
+      return;
+    }
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      this.commandSuccess = false;
+      this.commandResult = this.$i18n.locale === 'en'
+        ? 'This browser does not support microphone recording.'
+        : '当前浏览器不支持麦克风录音。';
+      return;
+    }
+
+    this.voiceBusy = true;
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
+
+      this.mediaStream = stream;
+      this.audioChunks = [];
+      this.mediaRecorder = new MediaRecorder(stream);
+
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          this.audioChunks.push(event.data);
+        }
+      };
+
+      this.mediaRecorder.onstop = async () => {
+        try {
+          this.voiceBusy = true;
+          this.commandSuccess = true;
+          this.commandResult = this.$i18n.locale === 'en'
+            ? 'Transcribing...'
+            : '正在识别语音...';
+
+          const audioBlob = new Blob(this.audioChunks, {
+            type: this.mediaRecorder.mimeType || 'audio/webm'
+          });
+
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'speech.webm');
+
+          const response = await fetch(`${API_5001}/transcribe`, {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(data.error || `HTTP error! status: ${response.status}`);
+          }
+
+          const recognizedText = (data.recognizedText || data.text || '').trim();
+
+          if (!recognizedText) {
+            this.commandSuccess = false;
+            this.commandResult = this.$i18n.locale === 'en'
+              ? 'No speech was recognized. Please try again.'
+              : '没有识别到语音内容，请再试一次。';
+            return;
+          }
+
+          this.command = recognizedText;
+          this.commandSuccess = true;
+          this.commandResult = this.$i18n.locale === 'en'
+            ? 'Speech recognition completed, please click Send.'
+            : '语音识别完成，请点击发送指令。';
+        } catch (err) {
+          console.error('语音识别失败', err);
+          this.commandSuccess = false;
+          this.commandResult = this.$i18n.locale === 'en'
+            ? `Speech recognition failed: ${err.message}`
+            : `语音识别失败: ${err.message}`;
+        } finally {
+          this.isRecording = false;
+          this.voiceBusy = false;
+
+          if (this.mediaStream) {
+            this.mediaStream.getTracks().forEach(track => track.stop());
+            this.mediaStream = null;
+          }
+
+          this.mediaRecorder = null;
+          this.audioChunks = [];
+        }
+      };
+
+      this.mediaRecorder.start();
+      this.isRecording = true;
+      this.commandSuccess = true;
+      this.commandResult = this.$i18n.locale === 'en'
+        ? 'Recording...'
+        : '正在录音...';
+    } catch (err) {
+      console.error('开始录音失败', err);
+      this.commandSuccess = false;
+      this.commandResult = this.$i18n.locale === 'en'
+        ? `Start recording failed: ${err.message}`
+        : `开始录音失败: ${err.message}`;
+    } finally {
+      this.voiceBusy = false;
+    }
+  },
+
 
         
 
-        stopRecording() {
-            if (this.voiceBusy) {
-                this.commandSuccess = false;
-                this.commandResult = this.$i18n.locale === 'en'
-                ? 'Please wait, voice service is busy.'
-                : '请稍候，语音服务正在处理中。';
-                return;
-            }
+        // stopRecording() {
+        //     if (this.voiceBusy) {
+        //         this.commandSuccess = false;
+        //         this.commandResult = this.$i18n.locale === 'en'
+        //         ? 'Please wait, voice service is busy.'
+        //         : '请稍候，语音服务正在处理中。';
+        //         return;
+        //     }
 
-            if (!this.isRecording) {
-                this.commandSuccess = false;
-                this.commandResult = this.$i18n.locale === 'en'
-                ? 'Recording has not started yet.'
-                : '当前还没有开始录音。';
-                return;
-            }
+        //     if (!this.isRecording) {
+        //         this.commandSuccess = false;
+        //         this.commandResult = this.$i18n.locale === 'en'
+        //         ? 'Recording has not started yet.'
+        //         : '当前还没有开始录音。';
+        //         return;
+        //     }
 
-            this.voiceBusy = true;
-            this.commandSuccess = true;
-            this.commandResult = this.$i18n.locale === 'en'
-                ? 'Transcribing...'
-                : '正在识别语音...';
+        //     this.voiceBusy = true;
+        //     this.commandSuccess = true;
+        //     this.commandResult = this.$i18n.locale === 'en'
+        //         ? 'Transcribing...'
+        //         : '正在识别语音...';
 
-            // fetch('http://127.0.0.1:5001/stopRecording', {
-            //fetch('http://172.20.10.4:5001/startRecording', {
-            fetch(`${API_5001}/stopRecording`, {
-                method: 'POST'
-            })
-                .then(async response => {
-                  const data = await response.json().catch(() => ({}));
-                  if (!response.ok) {
-                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
-                  }
-                  return data;
-               })
-                .then(data => {
-                    console.log('结束录音成功', data);
-                    const recognizedText = (data.recognizedText || '').trim();
-                    this.isRecording = false;
+        //     // fetch('http://127.0.0.1:5001/stopRecording', {
+        //     //fetch('http://172.20.10.4:5001/startRecording', {
+        //     fetch(`${API_5001}/stopRecording`, {
+        //         method: 'POST'
+        //     })
+        //         .then(async response => {
+        //           const data = await response.json().catch(() => ({}));
+        //           if (!response.ok) {
+        //             throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        //           }
+        //           return data;
+        //        })
+        //         .then(data => {
+        //             console.log('结束录音成功', data);
+        //             const recognizedText = (data.recognizedText || '').trim();
+        //             this.isRecording = false;
 
-                    if (!recognizedText) {
-                        this.commandSuccess = false;
-                        this.commandResult = this.$i18n.locale === 'en'
-                        ? 'No speech was recognized. Please try again.'
-                        : '没有识别到语音内容，请再试一次。';
-                        return;
-                    }
+        //             if (!recognizedText) {
+        //                 this.commandSuccess = false;
+        //                 this.commandResult = this.$i18n.locale === 'en'
+        //                 ? 'No speech was recognized. Please try again.'
+        //                 : '没有识别到语音内容，请再试一次。';
+        //                 return;
+        //             }
 
-                    this.command = recognizedText;
-                    this.commandSuccess = true;
-                    this.commandResult = this.$i18n.locale === 'en'
-                        ? 'Speech recognition completed, please click Send.'
-                        : '语音识别完成，请点击发送指令。';
-                })
-                .catch(err => {
-                  console.error('停止录音失败', err);
-                  this.isRecording = false;
-                  this.commandSuccess = false;
-                  this.commandResult = this.$i18n.locale === 'en'
-                    ? `Stop recording failed: ${err.message}`
-                    : `停止录音失败: ${err.message}`;
-                })
-                .finally(() => {
-                this.voiceBusy = false;
-                });
-        },
+        //             this.command = recognizedText;
+        //             this.commandSuccess = true;
+        //             this.commandResult = this.$i18n.locale === 'en'
+        //                 ? 'Speech recognition completed, please click Send.'
+        //                 : '语音识别完成，请点击发送指令。';
+        //         })
+        //         .catch(err => {
+        //           console.error('停止录音失败', err);
+        //           this.isRecording = false;
+        //           this.commandSuccess = false;
+        //           this.commandResult = this.$i18n.locale === 'en'
+        //             ? `Stop recording failed: ${err.message}`
+        //             : `停止录音失败: ${err.message}`;
+        //         })
+        //         .finally(() => {
+        //         this.voiceBusy = false;
+        //         });
+        // },
+        stopRecording: function () {
+          if (this.voiceBusy && !this.isRecording) {
+          this.commandSuccess = false;
+          this.commandResult = this.$i18n.locale === 'en'
+          ? 'Please wait, voice service is busy.'
+          : '请稍候，语音服务正在处理中。';
+          return;
+        }
+
+        if (!this.isRecording || !this.mediaRecorder) {
+          this.commandSuccess = false;
+          this.commandResult = this.$i18n.locale === 'en'
+          ? 'Recording has not started yet.'
+          : '当前还没有开始录音。';
+        return;
+        }
+
+        try {
+          this.mediaRecorder.stop();
+        } catch (err) {
+          console.error('停止录音失败', err);
+          this.isRecording = false;
+          this.voiceBusy = false;
+          this.commandSuccess = false;
+          this.commandResult = this.$i18n.locale === 'en'
+            ? `Stop recording failed: ${err.message}`
+            : `停止录音失败: ${err.message}`;
+        }
+      },
         
         confirmIntent: function () {
           console.log('confirm intentResult =', this.intentResult);

@@ -5,3 +5,5 @@ sounddevice
 numpy
 openai
 requests
+faster-whisper
+opencc-python-reimplemented

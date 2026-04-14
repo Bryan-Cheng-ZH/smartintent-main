@@ -7,6 +7,8 @@ spec:
   template:
     spec:
       containers:
-        - image: shidina/recorder-service:v1
+        # - image: shidina/recorder-service:v1
+        # - image: docker.io/cczhh/voiceinterface:voicefix1
+        - image: docker.io/cczhh/voiceinterface:voicefix2
           ports:
             - containerPort: 5001
