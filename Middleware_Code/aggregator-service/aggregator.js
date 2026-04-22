@@ -15,7 +15,15 @@ const services = {
   smartCurtains:     "http://smart-curtains-microservice.default/curtains/status",
   robotVacuum:       "http://robot-vacuum-microservice.default/robot/status",
   airPurifier:       "http://airpurifier-microservice.default/airpurifier/status",
-  pollutionSensor:   "http://pollution-sensor.default/pollution"
+  pollutionSensor:   "http://pollution-sensor.default/pollution",
+
+  smartWindow:       "http://smart-window-microservice.default/window/status",
+  waterHeater:       "http://water-heater-microservice.default/water-heater/status",
+  noiseSensor:       "http://noise-sensor.default/noise",
+
+  indoorPollutionSensor:  "http://indoor-pollution-sensor.default/indoor-pollution",
+  outdoorPollutionSensor: "http://outdoor-pollution-sensor.default/outdoor-pollution",
+  co2Sensor:              "http://co2-sensor.default/co2"
 };
 
 // Define GET /all-status endpoint to aggregate all service states

@@ -1,12 +1,12 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: aggregator
+  name: indoor-pollution-sensor
   namespace: default
 spec:
   template:
     spec:
       containers:
-        - image: crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/aggregator:v5
+        - image: crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/indoorpollution:v1
           ports:
             - containerPort: 3000

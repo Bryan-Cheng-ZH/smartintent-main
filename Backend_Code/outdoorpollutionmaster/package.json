@@ -1,0 +1,13 @@
+{
+  "name": "outdoor-pollution-sensor-microservice",
+  "version": "1.0.0",
+  "description": "A microservice that simulates outdoor air pollution readings.",
+  "main": "outdoor_pollution_service.js",
+  "scripts": {
+    "start": "node outdoor_pollution_service.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "redis": "^4.6.7"
+  }
+}

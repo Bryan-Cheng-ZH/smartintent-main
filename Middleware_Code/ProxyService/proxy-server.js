@@ -4,6 +4,7 @@ const { URL } = require('url');
 
 // 目标 Aggregator 服务地址
 const TARGET_URL = 'http://aggregator.default';
+const INTENT_SERVER_URL = process.env.INTENT_SERVER_URL || 'http://intent-server.default';
 
 const proxyServer = http.createServer((req, res) => {
   // CORS 设置
@@ -26,22 +27,34 @@ const proxyServer = http.createServer((req, res) => {
   let hostname = targetUrl.hostname;
   let port = targetUrl.port || 80;
   let path = targetUrl.pathname + targetUrl.search;
+  const intentServerUrl = new URL(INTENT_SERVER_URL);
 
 
   if (url === '/command') {
-    hostname = 'intent-server.default';
-    //port = 5050;
+    hostname = intentServerUrl.hostname;
+    port = intentServerUrl.port || 80;
     path = '/get-intent';
   } else if (url === '/execute-intent') {
-    hostname = 'intent-server.default';
-    //port = 5050;
+    hostname = intentServerUrl.hostname;
+    port = intentServerUrl.port || 80;
     path = '/execute-intent';
   } else if (url === '/confirm-rule') {
-    hostname = 'intent-server.default';
+    hostname = intentServerUrl.hostname;
+    port = intentServerUrl.port || 80;
     path = '/confirm-rule';
+  } else if (url === '/dispatch') {
+    hostname = 'dispatcher.default';
+    path = '/dispatch';
+  } else if (url === '/workflow') {
+    hostname = 'dispatcher.default';
+    path = '/workflow';
   } else if (url === '/rules') {
     hostname = 'rule-engine.default';
     path = '/rules';
+  } else if (url.startsWith('/modes')) {
+    hostname = 'mode-manager.default';
+    port = 80;
+    path = url;
   } else if (url === '/startRecording') {//新加的
     //hostname = 'intent-server.default';
     hostname = 'recorder-service.default';
@@ -75,6 +88,12 @@ const proxyServer = http.createServer((req, res) => {
     path = url;
   } else if (url.startsWith('/airpurifier')) { // ✅ 新设备：airPurifier
     hostname = 'airpurifier-microservice.default';
+    path = url;
+  } else if (url.startsWith('/window')) {
+    hostname = 'smart-window-microservice.default';
+    path = url;
+  } else if (url.startsWith('/water-heater')) {
+    hostname = 'water-heater-microservice.default';
     path = url;
   }
 
@@ -132,5 +151,5 @@ const PORT = 8080;
 proxyServer.listen(PORT, () => {
   console.log(`✅ 代理服务器运行在 http://localhost:${PORT}`);
   console.log(`🔁 默认转发 Aggregator 请求到 ${TARGET_URL}`);
-  console.log(`🧠 指令 /command 转发到 http://localhost:5050/get-intent`);
+  console.log(`🧠 Intent 请求转发到 ${INTENT_SERVER_URL}`);
 });

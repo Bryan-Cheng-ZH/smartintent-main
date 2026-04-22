@@ -1,0 +1,13 @@
+{
+  "name": "smart-window-microservice",
+  "version": "1.0.0",
+  "description": "A microservice for controlling a smart window.",
+  "main": "window_service.js",
+  "scripts": {
+    "start": "node window_service.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "redis": "^4.6.7"
+  }
+}

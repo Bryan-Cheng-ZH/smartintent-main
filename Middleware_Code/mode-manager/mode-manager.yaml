@@ -7,9 +7,11 @@ spec:
   template:
     spec:
       containers:
-        - image: docker.io/shidina/mode-manager:v1
+        - image: crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/mode-manager:v1
           ports:
             - containerPort: 3002
           env:
             - name: MONGODB_URI
-              value: mongodb://rule-mongo:27017/modemanager
+              value: mongodb://rule-mongo.default.svc.cluster.local:27017/modemanager
+            - name: DISPATCHER_URL
+              value: http://dispatcher.default/workflow

@@ -7,6 +7,6 @@ spec:
   template:
     spec:
       containers:
-        - image: docker.io/shidina/light-microservice:v1
+        - image: crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/light-microservice:v1
           ports:
             - containerPort: 3000

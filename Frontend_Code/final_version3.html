@@ -9,7 +9,7 @@
   <!-- Include Vue-i18n -->
   <script src="https://unpkg.com/vue-i18n@8.26.5/dist/vue-i18n.js"></script>
 
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=sensor17">
   <!-- 添加图标库 -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   
@@ -84,33 +84,62 @@
           <p>{{ error }}</p>
         </div>
         
-        <!-- 传感器信息卡片 -->
+        <!-- 信息卡片区域 -->
         <div class="info-cards">
           <div class="location-card">
             <h3>{{ $t('myLocation') }}</h3>
             <div class="location-name">{{ $t('defaultCity') }}</div>
             <div class="temperature">{{ statusData.temperatureSensor.currentTemperature }}°C</div>
-            <div class="weather-condition"><i class="fas fa-cloud-sun"></i> {{ $t('partlyCloudy') }}</div>
+            <div class="weather-condition">
+              <i class="fas fa-cloud-sun"></i>
+              {{ $t('partlyCloudy') }}
+            </div>
           </div>
-          
+
           <div class="energy-card">
             <h3>{{ $t('sensorStatus') }}</h3>
+
             <div class="sensors-container">
               <div class="sensor-item">
                 <i class="fas fa-thermometer-half"></i>
                 <span>{{ statusData.temperatureSensor.currentTemperature }}°C</span>
               </div>
+
               <div class="sensor-item">
                 <i class="fas fa-tint"></i>
                 <span>{{ statusData.humiditySensor.currentHumidity }}%</span>
               </div>
+
               <div class="sensor-item">
                 <i class="fas fa-smog"></i>
                 <span>{{ statusData.pollutionSensor.currentPollution }}/500</span>
               </div>
+
+              <div class="sensor-item">
+                <i class="fas fa-volume-up"></i>
+                <span>{{ statusData.noiseSensor.currentNoise }} dB</span>
+              </div>
+
+              <div class="sensor-item">
+                <i class="fas fa-home"></i>
+                <span>In {{ statusData.indoorPollutionSensor.currentPollution }} AQI</span>
+              </div>
+
+              <div class="sensor-item">
+                <i class="fas fa-tree"></i>
+                <span>Out {{ statusData.outdoorPollutionSensor.currentPollution }} AQI</span>
+              </div>
+
+              <div class="sensor-item">
+                <i class="fas fa-wind"></i>
+                <span>CO₂ {{ statusData.co2Sensor.currentCO2 }} ppm</span>
+              </div>
             </div>
           </div>
         </div>
+
+
+
         
         <!-- 设备列表容器 - 可滚动 -->
         <div class="devices-scroll-container">
@@ -227,6 +256,39 @@
                 <span class="slider round"></span>
               </label>
               <div class="device-status">{{ statusData.coffeeMachine.status === 'on' ? $t('on') : $t('off') }}</div>
+            </div>
+
+            <!-- 窗户 -->
+            <div class="device-card window" @click="showDeviceDetail('smartWindow')">
+              <div class="device-icon-container">
+                <i class="fas fa-window-maximize device-icon"></i>
+              </div>
+              <div class="device-name">Smart Window</div>
+              <div class="device-detail">Open: {{ statusData.smartWindow.openPercentage }}%</div>
+              <div class="device-control">
+                <label class="switch">
+                  <input type="checkbox" :checked="statusData.smartWindow.status === 'on'" @change="controlDevice('smartWindow', 'status', $event.target.checked ? 'on' : 'off')">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="device-status">{{ statusData.smartWindow.status === 'on' ? 'On' : 'Off' }}</div>
+            </div>
+
+
+            <!-- 热水器 -->
+            <div class="device-card water-heater" @click="showDeviceDetail('waterHeater')">
+              <div class="device-icon-container">
+                <i class="fas fa-fire device-icon"></i>
+              </div>
+              <div class="device-name">Water Heater</div>
+              <div class="device-detail">{{ statusData.waterHeater.temperature }}°C · {{ statusData.waterHeater.mode }}</div>
+              <div class="device-control">
+                <label class="switch">
+                  <input type="checkbox" :checked="statusData.waterHeater.status === 'on'" @change="controlDevice('waterHeater', 'status', $event.target.checked ? 'on' : 'off')">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="device-status">{{ statusData.waterHeater.status === 'on' ? 'On' : 'Off' }}</div>
             </div>
           </div>
         </div>
@@ -1045,7 +1107,13 @@
       smartCurtains: { status: "off", openPercentage: 100 },
       airPurifier: { status: "off", mode: "auto", fanSpeed: "medium", airQuality: 150 },
       robotVacuum: { status: "off", cleaningMode: "standard", batteryLevel: 80 },
-      coffeeMachine: { status: "off", brewMode: "Espresso" }
+      coffeeMachine: { status: "off", brewMode: "Espresso" },
+      noiseSensor: { currentNoise: 35, unit: "dB", location: "window" },
+      indoorPollutionSensor: { currentPollution: 80, unit: "AQI", location: "indoor" },
+      outdoorPollutionSensor: { currentPollution: 90, unit: "AQI", location: "outdoor" },
+      co2Sensor: { currentCO2: 800, unit: "ppm", location: "indoor" },
+      smartWindow: { status: "off", openPercentage: 0, lockStatus: "unlocked" },
+      waterHeater: { status: "off", mode: "keep_warm", temperature: 45 }
     };
 
     new Vue({
@@ -1088,7 +1156,9 @@
           smartCurtains: false,
           airPurifier: false,
           robotVacuum: false,
-          coffeeMachine: false
+          coffeeMachine: false,
+          smartWindow: false,
+          waterHeater: false
         },
         
         // 控制反馈
@@ -1100,7 +1170,9 @@
           smartCurtains: '',
           airPurifier: '',
           robotVacuum: '',
-          coffeeMachine: ''
+          coffeeMachine: '',
+          smartWindow: '',
+          waterHeater: ''
         },
         
         // 设备微服务URLs
@@ -1132,7 +1204,9 @@
               coffeeMachine: `${API_8080}/coffee/control`,
               smartCurtains: `${API_8080}/curtains/control`,
               robotVacuum: `${API_8080}/robot/control`,
-              airPurifier: `${API_8080}/airpurifier/control`
+              airPurifier: `${API_8080}/airpurifier/control`,
+              smartWindow: `${API_8080}/window/control`,
+              waterHeater: `${API_8080}/water-heater/control`
         },
         // 设备控制计时器
         debounceTimers: {
@@ -1143,7 +1217,9 @@
           smartCurtains: null,
           airPurifier: null,
           robotVacuum: null,
-          coffeeMachine: null
+          coffeeMachine: null,
+          smartWindow: null,
+          waterHeater: null
         }
       },
       methods: {
@@ -1195,7 +1271,9 @@
               return response.json();
             })
             .then(data => {
-              this.statusData = data;
+              //this.statusData = data;
+              this.statusData = Object.assign(JSON.parse(JSON.stringify(mockData)), data);
+
               
               if (!this.statusData.brightnessSensor) {
                 this.statusData.brightnessSensor = { currentBrightness: 60 };
@@ -1473,6 +1551,37 @@
               // 更新本地状态模拟响应
               this.statusData.coffeeMachine.brewMode = value;
             } 
+          } else if (deviceId === 'smartWindow') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} smart window`,
+                deviceId: "smartWindow",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                openPercentage: value === 'on' ? 60 : null,
+                lockStatus: null
+              };
+
+              this.statusData.smartWindow.status = value;
+              this.statusData.smartWindow.openPercentage = value === 'on' ? 60 : 0;
+            }
+          } else if (deviceId === 'waterHeater') {
+            if (parameter === 'status') {
+              controlData = {
+                message: `Turn ${value} water heater`,
+                deviceId: "waterHeater",
+                status: value,
+                action: value === 'on' ? 'turn_on' : 'turn_off',
+                mode: value === 'on' ? 'heating' : null,
+                temperature: value === 'on' ? 55 : null
+              };
+
+              this.statusData.waterHeater.status = value;
+              if (value === 'on') {
+                this.statusData.waterHeater.mode = 'heating';
+                this.statusData.waterHeater.temperature = 55;
+              }
+            }
           }
           
           // 使用防抖延迟发送请求

@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         # - image: wangjiayue123/rule-engine:v3
-        - image: docker.io/cczhh/rule-engine:v1
+        - image: crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/rule-engine:v1
           ports:
             - containerPort: 3000
           env:

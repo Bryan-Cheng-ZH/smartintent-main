@@ -12,7 +12,9 @@ const DEVICE_URLS = {
   "coffeeMachine": "http://coffee-machine-microservice.default/coffee/control",
   "smartCurtains": "http://smart-curtains-microservice.default/curtains/control",
   "robotVacuum": "http://robot-vacuum-microservice.default/robot/control",
-  "airPurifier": "http://airpurifier-microservice.default/airpurifier/control"
+  "airPurifier": "http://airpurifier-microservice.default/airpurifier/control",
+  "smartWindow": "http://smart-window-microservice.default/window/control",
+  "waterHeater": "http://water-heater-microservice.default/water-heater/control"
 };
 
 // Define POST /dispatch

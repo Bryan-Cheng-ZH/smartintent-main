@@ -48,6 +48,7 @@ last_audio_seconds = 0.0
 
 # ===== Model preload =====
 model: Optional[WhisperModel] = None
+# model = WhisperModel("/root/whisper-model", device="cpu", compute_type="float32")
 
 
 def append_log(target: str, message: str) -> None:
@@ -66,7 +67,7 @@ def preload_model() -> None:
     try:
         append_log("stdout", f"Loading faster-whisper model: {MODEL_NAME}")
         model = WhisperModel(
-            MODEL_NAME,
+            "/root/whisper-model",
             device=DEVICE,
             compute_type=COMPUTE_TYPE,
         )

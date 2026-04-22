@@ -6,8 +6,8 @@ const app = express();
 
 app.use(express.json());
 
-// ✅ Dispatcher workflow endpoint
-const DISPATCHER_URL = 'http://dispatcher.default/workflow';
+// Dispatcher workflow endpoint
+const DISPATCHER_URL = process.env.DISPATCHER_URL || 'http://dispatcher.default/workflow';
 
 // ✅ MongoDB Schema for automation modes
 const modeSchema = new mongoose.Schema({

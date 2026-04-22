@@ -1,0 +1,16 @@
+[Unit]
+Description=SmartIntent GPU IntentService
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Restart=always
+RestartSec=5
+EnvironmentFile=/etc/smartintent/intent-service.env
+ExecStartPre=-/usr/bin/docker rm -f smartintent-intent
+ExecStart=/usr/bin/docker run --rm --name smartintent-intent --network host --env-file /etc/smartintent/intent-service.env crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/intent-server:qwen-v1
+ExecStop=/usr/bin/docker stop smartintent-intent
+
+[Install]
+WantedBy=multi-user.target

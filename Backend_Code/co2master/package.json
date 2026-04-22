@@ -1,0 +1,14 @@
+{
+  "name": "co2-sensor-microservice",
+  "version": "1.0.0",
+  "description": "A microservice that simulates indoor CO2 concentration based on ventilation through smart windows.",
+  "main": "co2_service.js",
+  "scripts": {
+    "start": "node co2_service.js"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "express": "^4.21.2",
+    "redis": "^4.6.7"
+  }
+}

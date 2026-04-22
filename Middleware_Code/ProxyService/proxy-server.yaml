@@ -7,6 +7,6 @@ spec:
   template:
     spec:
       containers:
-        - image: docker.io/cczhh/proxy-server:v4
+        - image: crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/proxy-server:v2
           ports:
             - containerPort: 8080
