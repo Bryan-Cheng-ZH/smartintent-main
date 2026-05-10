@@ -26,11 +26,13 @@ app.json.ensure_ascii = False
 # ===== Config =====
 SAMPLE_RATE = int(os.getenv("STT_SAMPLE_RATE", "16000"))
 CHANNELS = int(os.getenv("STT_CHANNELS", "1"))
-MODEL_NAME = os.getenv("STT_MODEL", "small")
+#MODEL_NAME = os.getenv("STT_MODEL", "small")
+MODEL_NAME = os.getenv("STT_MODEL", "tiny")
 # LANGUAGE = os.getenv("STT_LANGUAGE", "zh")
 #调整自动识别语言
 LANGUAGE = os.getenv("STT_LANGUAGE", "auto").strip().lower()
-COMPUTE_TYPE = os.getenv("STT_COMPUTE_TYPE", "float32")
+#COMPUTE_TYPE = os.getenv("STT_COMPUTE_TYPE", "float32")
+COMPUTE_TYPE = os.getenv("STT_COMPUTE_TYPE", "int8")
 DEVICE = os.getenv("STT_DEVICE", "cpu")
 
 # ===== State =====
@@ -71,6 +73,11 @@ def preload_model() -> None:
             device=DEVICE,
             compute_type=COMPUTE_TYPE,
         )
+        #model = WhisperModel(
+        #    MODEL_NAME,
+        #    device=DEVICE,
+        #    compute_type=COMPUTE_TYPE,
+        #)
         # Warm-up with silence to reduce first-use latency.
         silence = np.zeros(SAMPLE_RATE, dtype=np.float32)
         warmup_language = resolve_language()
@@ -234,7 +241,7 @@ def stop_recording():
             audio,
             language=transcribe_language,
             vad_filter=True,
-            beam_size=5,
+            beam_size=1,
             condition_on_previous_text=False,
             initial_prompt="智能家居语音指令，常见词包括：打开，关闭，客厅，卧室，空调，灯，窗帘，电视，加湿器。",
         )
@@ -373,7 +380,7 @@ def transcribe_audio():
             audio,
             language=transcribe_language,
             vad_filter=True,
-            beam_size=5,
+            beam_size=1,
             condition_on_previous_text=False,
             initial_prompt="智能家居语音指令，常见词包括：打开，关闭，客厅，卧室，空调，灯，窗帘，电视，加湿器。",
         )

@@ -1,0 +1,53 @@
+{
+  "dataset": "/Users/lty/Desktop/smartintent-main_fixed/prompt_engineering/experiment_outputs/targeted_subset/dataset_targeted.jsonl",
+  "model": "qwen2.5:3b",
+  "ollama_url": "http://127.0.0.1:11434/api/generate",
+  "timeout_seconds": 120,
+  "limit": null,
+  "results": {
+    "improved": {
+      "samples": 37,
+      "json_parse_success": 37,
+      "schema_valid": 37,
+      "needs_clarification_correct": 9,
+      "exact_match": 0,
+      "result_match": 8,
+      "message_nonempty": 37,
+      "latency_seconds_mean": 4.563,
+      "latency_seconds_median": 4.376,
+      "errors": 0,
+      "paper_metrics": {
+        "IU": {
+          "count": 11,
+          "rate": 0.2973
+        },
+        "DI": {
+          "count": 11,
+          "rate": 0.2973
+        },
+        "CH": {
+          "count": 9,
+          "rate": 0.2432
+        },
+        "APC": {
+          "count": 9,
+          "rate": 0.2432
+        },
+        "OFC": {
+          "count": 37,
+          "rate": 1.0
+        },
+        "LC": {
+          "count": 37,
+          "rate": 1.0
+        }
+      },
+      "json_parse_success_rate": 1.0,
+      "schema_valid_rate": 1.0,
+      "needs_clarification_correct_rate": 0.2432,
+      "exact_match_rate": 0.0,
+      "result_match_rate": 0.2162,
+      "message_nonempty_rate": 1.0
+    }
+  }
+}

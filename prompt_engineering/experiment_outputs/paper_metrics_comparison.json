@@ -1,0 +1,34 @@
+{
+  "baseline_vs_improved_paper_metrics": {
+    "IU": {
+      "baseline": 0.396,
+      "improved": 0.396,
+      "delta_improved_minus_baseline": 0.0
+    },
+    "DI": {
+      "baseline": 0.4257,
+      "improved": 0.4257,
+      "delta_improved_minus_baseline": 0.0
+    },
+    "CH": {
+      "baseline": 0.6535,
+      "improved": 0.5743,
+      "delta_improved_minus_baseline": -0.0792
+    },
+    "APC": {
+      "baseline": 0.2574,
+      "improved": 0.2178,
+      "delta_improved_minus_baseline": -0.0396
+    },
+    "OFC": {
+      "baseline": 1.0,
+      "improved": 1.0,
+      "delta_improved_minus_baseline": 0.0
+    },
+    "LC": {
+      "baseline": 1.0,
+      "improved": 1.0,
+      "delta_improved_minus_baseline": 0.0
+    }
+  }
+}

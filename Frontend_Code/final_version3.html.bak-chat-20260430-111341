@@ -9,7 +9,7 @@
   <!-- Include Vue-i18n -->
   <script src="https://unpkg.com/vue-i18n@8.26.5/dist/vue-i18n.js"></script>
 
-  <link rel="stylesheet" href="styles.css?v=chat2">
+  <link rel="stylesheet" href="styles.css?v=sensor17">
   <!-- 添加图标库 -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   
@@ -855,22 +855,19 @@
             </button>
          </div>
 
-          <div class="chat-thread" v-if="chatMessages.length">
-          <div
-            v-for="(message, index) in chatMessages"
-            :key="index"
-            class="chat-row"
-            :class="'chat-' + message.role"
-          >
-            <div class="chat-bubble">{{ message.text }}</div>
+          <div v-if="commandResult" 
+              class="command-result" 
+              :class="commandSuccess ? 'result-success' : 'result-error'">
+            {{ commandResult }}
           </div>
-        </div>
 
-        <div v-if="commandResult" 
-            class="command-result" 
-            :class="commandSuccess ? 'result-success' : 'result-error'">
-          {{ commandResult }}
-        </div>
+          <div v-if="awaitingConfirmation" class="command-result result-success">
+            <p>🤖 {{ $t('aiSuggests') }}: "{{ intentSummary }}"</p>
+            <div class="confirmation-buttons">
+              <button class="confirm-button" @click="confirmIntent">{{ $t('confirmExecute') }}</button>
+              <button class="cancel-button" @click="cancelIntent">{{ $t('cancel') }}</button>
+            </div>
+          </div>
         </div>
       </template>
     </div>
@@ -1130,7 +1127,6 @@
         commandResult: '',
         commandLoading: false,
         commandSuccess: true,
-        chatMessages: [],
         // 新加的
         isRecording: false,
         voiceBusy: false,
@@ -1227,90 +1223,7 @@
         }
       },
       methods: {
-pushChatMessage: function(role, text) {
-          if (!text) return;
-
-          this.chatMessages.push({
-            role: role,
-            text: text
-          });
-
-          this.$nextTick(() => {
-            const thread = document.querySelector('.chat-thread');
-            if (thread) {
-              thread.scrollTop = thread.scrollHeight;
-            }
-          });
-        },
-
-        executeIntentNow: function(results) {
-          fetch(`${API_8080}/execute-intent`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ results: results })
-          })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`Execution failed! status: ${response.status}`);
-              }
-              return response.json();
-            })
-            .then(() => {
-              this.commandSuccess = true;
-              this.commandResult = this.$i18n.locale === 'en' ? 'Done' : '已执行';
-              this.pushChatMessage('system', this.commandResult);
-              this.fetchStatus();
-            })
-            .catch(err => {
-              this.commandSuccess = false;
-              this.commandResult = this.$i18n.locale === 'en'
-                ? `Execution failed: ${err.message}`
-                : `执行失败: ${err.message}`;
-              this.pushChatMessage('system', this.commandResult);
-            })
-            .finally(() => {
-              this.intentResult = null;
-              this.intentSummary = '';
-              this.awaitingConfirmation = false;
-            });
-        },
-
-        confirmRuleNow: function(rulePayload) {
-          const plainRulePayload = JSON.parse(JSON.stringify(rulePayload));
-
-          fetch(`${API_8080}/confirm-rule`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ rule_payload: plainRulePayload })
-          })
-            .then(async response => {
-              const data = await response.json().catch(() => ({}));
-              if (!response.ok) {
-                throw new Error(data.error || `Rule save failed! status: ${response.status}`);
-              }
-              return data;
-            })
-            .then(() => {
-              this.commandSuccess = true;
-              this.commandResult = this.$i18n.locale === 'en' ? 'Rule saved' : '规则已保存';
-              this.pushChatMessage('system', this.commandResult);
-              this.fetchStatus();
-            })
-            .catch(err => {
-              this.commandSuccess = false;
-              this.commandResult = this.$i18n.locale === 'en'
-                ? `Rule save failed: ${err.message}`
-                : `规则保存失败: ${err.message}`;
-              this.pushChatMessage('system', this.commandResult);
-            })
-            .finally(() => {
-              this.rulePayload = null;
-              this.intentSummary = '';
-              this.awaitingConfirmation = false;
-            });
-        },
-
-                // 显示设备详情
+        // 显示设备详情
         showDeviceDetail(device) {
           this.currentDevice = device;
         },
@@ -1729,8 +1642,6 @@ pushChatMessage: function(role, text) {
         // 发送命令--规则指令点击确认后不跳转版本（似乎也不执行操作）
         sendCommand: function() {
           if (!this.command.trim()) return;
-          const userInstruction = this.command.trim();
-          this.pushChatMessage('user', userInstruction);
           
           this.commandLoading = true;
           this.commandResult = '';
@@ -1787,7 +1698,7 @@ pushChatMessage: function(role, text) {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ userInstruction: userInstruction })
+            body: JSON.stringify({ userInstruction: this.command })
           })
             .then(response => {
               if (!response.ok) {
@@ -1817,44 +1728,24 @@ pushChatMessage: function(role, text) {
 
               this.intentSummary = (data.intent_result && data.intent_result.message) || data.summary || '';
 
-              this.awaitingConfirmation = false;
-              this.commandResult = '';
-
-              if (this.intentSummary) {
-                this.pushChatMessage('ai', this.intentSummary);
-              }
-
-              const intentResults = this.intentResult && (this.intentResult.results || this.intentResult.result);
-
-              if (!data.allError && intentResults) {
-                this.pushChatMessage(
-                  'system',
-                  this.$i18n.locale === 'en' ? 'Executing...' : '正在执行...'
-                );
-                this.executeIntentNow(intentResults);
-              } else if (!data.allError && this.rulePayload) {
-                this.pushChatMessage(
-                  'system',
-                  this.$i18n.locale === 'en' ? 'Saving rule...' : '正在保存规则...'
-                );
-                this.confirmRuleNow(this.rulePayload);
+              // 只有在没有报错，并且确实拿到了可确认内容时，才显示确认按钮
+              if (!data.allError && (this.intentResult || this.rulePayload)) {
+                this.awaitingConfirmation = true;
               } else {
-                this.commandSuccess = false;
-                this.commandResult = this.intentSummary || (this.$i18n.locale === 'en' ? 'No executable intent found.' : '没有找到可执行的指令。');
-                this.pushChatMessage('system', this.commandResult);
+                this.awaitingConfirmation = false;
               }
+
+              this.commandResult = `${this.$t('aiSuggests')}: "${this.intentSummary}"`;
             })
             .catch(err => {
               this.commandResult = this.$i18n.locale === 'en' ? 
                 `Failed: ${err.message}` : 
                 `失败: ${err.message}`;
               this.commandSuccess = false;
-              this.pushChatMessage('system', this.commandResult);
             })
             .finally(() => {
               clearInterval(thinkingInterval);
               this.commandLoading = false;
-              this.command = '';
             });
         },
 

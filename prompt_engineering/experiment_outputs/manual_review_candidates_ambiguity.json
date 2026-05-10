@@ -1,0 +1,235 @@
+[
+  {
+    "index": 51,
+    "instruction": "Is it just me or is it very hazy today?",
+    "reference_output": {
+      "needsClarification": true,
+      "message": "I understand you're concerned about the haze. The air quality is indeed poor outside. Would you like me to turn on the air purifier or close the windows and curtains?",
+      "result": []
+    },
+    "baseline_prediction": {
+      "needsClarification": true,
+      "message": "Would you like me to turn on the air purifier or open the window?",
+      "result": []
+    },
+    "improved_prediction": {
+      "needsClarification": false,
+      "message": "It feels like the air quality might be poor today, but I will check the state of the window and purifier first.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_off",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "auto"
+          }
+        },
+        {
+          "deviceId": "smartWindow",
+          "action": "turn_off",
+          "parameters": {
+            "lockStatus": "unlocked",
+            "openPercentage": 0
+          }
+        }
+      ]
+    },
+    "baseline_CH_correct": true,
+    "improved_CH_correct": false,
+    "baseline_result_match": true,
+    "improved_result_match": false
+  },
+  {
+    "index": 72,
+    "instruction": "I've been feeling a bit restless and uneasy lately",
+    "reference_output": {
+      "needsClarification": true,
+      "message": "I understand you're feeling restless. Would you like me to brighten the lights to make it cheerier, or turn on the TV for some company?",
+      "result": []
+    },
+    "baseline_prediction": {
+      "needsClarification": true,
+      "message": "It feels dry inside. Would you like me to turn on the humidifier or open the window?",
+      "result": []
+    },
+    "improved_prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the TV to help you feel more relaxed.",
+      "result": [
+        {
+          "deviceId": "tv",
+          "action": "turn_on",
+          "parameters": {
+            "channel": 1,
+            "volume": 0
+          }
+        }
+      ]
+    },
+    "baseline_CH_correct": true,
+    "improved_CH_correct": false,
+    "baseline_result_match": true,
+    "improved_result_match": false
+  },
+  {
+    "index": 76,
+    "instruction": "I think I need to freshen up a little",
+    "reference_output": {
+      "needsClarification": true,
+      "message": "I'd like to help you freshen up. Would you like me to heat the water for a shower or prepare a cup of coffee?",
+      "result": []
+    },
+    "baseline_prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the air purifier to help freshen up the room.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    "improved_prediction": {
+      "needsClarification": true,
+      "message": "The room's air quality is poor and the window status is off. Would you like me to turn on the air purifier or open the window for better ventilation?",
+      "result": []
+    },
+    "baseline_CH_correct": false,
+    "improved_CH_correct": true,
+    "baseline_result_match": false,
+    "improved_result_match": true
+  },
+  {
+    "index": 78,
+    "instruction": "I'm starting to feel a bit stiff sitting here",
+    "reference_output": {
+      "needsClarification": true,
+      "message": "I'm sorry you feel stiff. It's a bit cool in here; would you like me to turn on the heater or should I start the robot vacuum to clear some space for you to move?",
+      "result": []
+    },
+    "baseline_prediction": {
+      "needsClarification": true,
+      "message": "It seems like you might benefit from some fresh air or a slight increase in humidity. Would you like to open the window, turn on the humidifier, or do something else?",
+      "result": []
+    },
+    "improved_prediction": {
+      "needsClarification": false,
+      "message": "I will adjust the AC settings for you to improve your comfort.",
+      "result": [
+        {
+          "deviceId": "ac",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "cool",
+            "temperature": 24
+          }
+        }
+      ]
+    },
+    "baseline_CH_correct": true,
+    "improved_CH_correct": false,
+    "baseline_result_match": true,
+    "improved_result_match": false
+  },
+  {
+    "index": 81,
+    "instruction": "I'm not sure if I'm comfortable or not",
+    "reference_output": {
+      "needsClarification": true,
+      "message": "It can be hard to tell. I noticed the humidity is a bit high; should I turn on the humidifier's dry mode or adjust the AC temperature for you?",
+      "result": []
+    },
+    "baseline_prediction": {
+      "needsClarification": true,
+      "message": "Would you like me to adjust the temperature or fan speed of your AC, or is there anything else I can help with?",
+      "result": []
+    },
+    "improved_prediction": {
+      "needsClarification": false,
+      "message": "The indoor air quality is poor and the outdoor air quality is also poor, so I will turn on the air purifier for you.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    "baseline_CH_correct": true,
+    "improved_CH_correct": false,
+    "baseline_result_match": true,
+    "improved_result_match": false
+  },
+  {
+    "index": 94,
+    "instruction": "I'm not sure what to do with myself this afternoon",
+    "reference_output": {
+      "needsClarification": true,
+      "message": "I'd like to help you find something to do. Should I turn on the TV for you, or would you like a fresh cup of coffee?",
+      "result": []
+    },
+    "baseline_prediction": {
+      "needsClarification": true,
+      "message": "Would you like to turn on the coffee machine or do something else?",
+      "result": []
+    },
+    "improved_prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the TV to help you pass the afternoon.",
+      "result": [
+        {
+          "deviceId": "tv",
+          "action": "turn_on",
+          "parameters": {
+            "channel": 1,
+            "volume": 0
+          }
+        }
+      ]
+    },
+    "baseline_CH_correct": true,
+    "improved_CH_correct": false,
+    "baseline_result_match": true,
+    "improved_result_match": false
+  },
+  {
+    "index": 98,
+    "instruction": "Is it just me or is it getting quite hazy?",
+    "reference_output": {
+      "needsClarification": true,
+      "message": "I understand you're concerned about the haze. The outdoor air is very poor; should I close the curtains or turn on the air purifier for you?",
+      "result": []
+    },
+    "baseline_prediction": {
+      "needsClarification": false,
+      "message": "It seems the outdoor air quality is not ideal, so I will turn on the air purifier for you.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    "improved_prediction": {
+      "needsClarification": true,
+      "message": "The indoor air quality is poor. Would you like to turn on the air purifier or open the window?",
+      "result": []
+    },
+    "baseline_CH_correct": false,
+    "improved_CH_correct": true,
+    "baseline_result_match": false,
+    "improved_result_match": true
+  }
+]

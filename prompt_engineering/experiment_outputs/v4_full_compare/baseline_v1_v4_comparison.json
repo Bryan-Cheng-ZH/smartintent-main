@@ -1,0 +1,58 @@
+{
+  "full_comparison": {
+    "IU": {
+      "baseline": 0.396,
+      "improved_v1": 0.396,
+      "improved_v4": 0.505,
+      "delta_v4_minus_baseline": 0.109,
+      "delta_v4_minus_v1": 0.109
+    },
+    "DI": {
+      "baseline": 0.4257,
+      "improved_v1": 0.4257,
+      "improved_v4": 0.5149,
+      "delta_v4_minus_baseline": 0.0892,
+      "delta_v4_minus_v1": 0.0892
+    },
+    "CH": {
+      "baseline": 0.6535,
+      "improved_v1": 0.5743,
+      "improved_v4": 0.6931,
+      "delta_v4_minus_baseline": 0.0396,
+      "delta_v4_minus_v1": 0.1188
+    },
+    "APC": {
+      "baseline": 0.2574,
+      "improved_v1": 0.2178,
+      "improved_v4": 0.3168,
+      "delta_v4_minus_baseline": 0.0594,
+      "delta_v4_minus_v1": 0.099
+    },
+    "OFC": {
+      "baseline": 1.0,
+      "improved_v1": 1.0,
+      "improved_v4": 1.0,
+      "delta_v4_minus_baseline": 0.0,
+      "delta_v4_minus_v1": 0.0
+    },
+    "LC": {
+      "baseline": 1.0,
+      "improved_v1": 1.0,
+      "improved_v4": 1.0,
+      "delta_v4_minus_baseline": 0.0,
+      "delta_v4_minus_v1": 0.0
+    }
+  },
+  "auxiliary": {
+    "result_match_rate": {
+      "baseline": 0.2574,
+      "improved_v1": 0.2079,
+      "improved_v4": 0.3069
+    },
+    "latency_seconds_mean": {
+      "baseline": 5.08,
+      "improved_v1": 4.518,
+      "improved_v4": 4.205
+    }
+  }
+}

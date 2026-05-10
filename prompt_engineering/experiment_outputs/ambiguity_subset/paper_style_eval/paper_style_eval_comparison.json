@@ -1,0 +1,71 @@
+{
+  "dataset": "/Users/lty/Desktop/smartintent-main_fixed/prompt_engineering/experiment_outputs/ambiguity_subset/dataset_ambiguity.jsonl",
+  "provider": "ollama",
+  "evaluator_model": "qwen2.5:3b",
+  "results": {
+    "baseline": {
+      "samples": 31,
+      "errors": 0,
+      "latency_seconds_mean": 7.385,
+      "latency_seconds_median": 7.273,
+      "paper_metrics": {
+        "IU": {
+          "count": 1,
+          "rate": 0.0323
+        },
+        "DI": {
+          "count": 20,
+          "rate": 0.6452
+        },
+        "CH": {
+          "count": 29,
+          "rate": 0.9355
+        },
+        "APC": {
+          "count": 0,
+          "rate": 0.0
+        },
+        "OFC": {
+          "count": 25,
+          "rate": 0.8065
+        },
+        "LC": {
+          "count": 19,
+          "rate": 0.6129
+        }
+      }
+    },
+    "improved": {
+      "samples": 31,
+      "errors": 0,
+      "latency_seconds_mean": 9.882,
+      "latency_seconds_median": 10.031,
+      "paper_metrics": {
+        "IU": {
+          "count": 4,
+          "rate": 0.129
+        },
+        "DI": {
+          "count": 19,
+          "rate": 0.6129
+        },
+        "CH": {
+          "count": 29,
+          "rate": 0.9355
+        },
+        "APC": {
+          "count": 0,
+          "rate": 0.0
+        },
+        "OFC": {
+          "count": 24,
+          "rate": 0.7742
+        },
+        "LC": {
+          "count": 22,
+          "rate": 0.7097
+        }
+      }
+    }
+  }
+}

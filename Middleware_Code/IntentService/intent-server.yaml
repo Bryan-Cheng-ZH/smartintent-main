@@ -9,7 +9,7 @@ spec:
       containers:
         # - image: docker.io/wangjiayue123/intent-server:v7
         # - image: docker.io/cczhh/intent-server:v1
-        - image: crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/intent-server:qwen-v3
+        - image: crpi-cn1s409pxj9e0zxn.cn-hangzhou.personal.cr.aliyuncs.com/smartintent/intent-server:qwen-v6
         # - image: intent-server:local
         #   imagePullPolicy: IfNotPresent
           ports:

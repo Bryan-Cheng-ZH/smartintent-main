@@ -1,0 +1,32 @@
+{
+  "samples": 2,
+  "errors": 0,
+  "latency_seconds_mean": 6.97,
+  "latency_seconds_median": 6.97,
+  "paper_metrics": {
+    "IU": {
+      "count": 0,
+      "rate": 0.0
+    },
+    "DI": {
+      "count": 1,
+      "rate": 0.5
+    },
+    "CH": {
+      "count": 2,
+      "rate": 1.0
+    },
+    "APC": {
+      "count": 0,
+      "rate": 0.0
+    },
+    "OFC": {
+      "count": 1,
+      "rate": 0.5
+    },
+    "LC": {
+      "count": 2,
+      "rate": 1.0
+    }
+  }
+}

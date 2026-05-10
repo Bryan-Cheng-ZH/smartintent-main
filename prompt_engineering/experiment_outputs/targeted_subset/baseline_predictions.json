@@ -1,0 +1,1446 @@
+[
+  {
+    "index": 1,
+    "userInstruction": "The air feels a bit stuffy",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"It feels dry, so I will turn on the humidifier for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"humidifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"level\": 3\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "It feels dry, so I will turn on the humidifier for you.",
+      "result": [
+        {
+          "deviceId": "humidifier",
+          "action": "turn_on",
+          "parameters": {
+            "level": 3
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "It seems the air feels stuffy. Since the outdoor air is fresh, would you like me to open the window or turn on the air purifier?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.0036511421203613,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 2
+  },
+  {
+    "index": 2,
+    "userInstruction": "The light is a bit too strong",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will adjust the brightness of your light to a lower level.\",\n  \"result\": [\n    {\n      \"deviceId\": \"light\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"brightness\": 3\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will adjust the brightness of your light to a lower level.",
+      "result": [
+        {
+          "deviceId": "light",
+          "action": "turn_on",
+          "parameters": {
+            "brightness": 3
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "It seems a bit too bright. Would you like me to dim the light or close the curtains?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.918767213821411,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 5
+  },
+  {
+    "index": 3,
+    "userInstruction": "It’s a bit dim",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"It seems like adjusting the light brightness would help brighten things up. I will turn it on for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"light\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "It seems like adjusting the light brightness would help brighten things up. I will turn it on for you.",
+      "result": [
+        {
+          "deviceId": "light",
+          "action": "turn_on",
+          "parameters": {
+            "brightness": 1
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "It seems a bit dim. Would you like me to turn on the light or open the curtains?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.9256787300109863,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 10
+  },
+  {
+    "index": 4,
+    "userInstruction": "Something doesn’t feel quite right",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"It feels a bit stuffy indoors and outside air quality is not ideal. Would you like me to turn on the air purifier or open the smart window?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "It feels a bit stuffy indoors and outside air quality is not ideal. Would you like me to turn on the air purifier or open the smart window?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I’m not sure what feels wrong. Could you tell me if it is the temperature, the light, or something else?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 2.531247854232788,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 11
+  },
+  {
+    "index": 5,
+    "userInstruction": "It feels a little warm",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn on the air purifier to help with the warm indoor temperature.\",\n  \"result\": [\n    {\n      \"deviceId\": \"airPurifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the air purifier to help with the warm indoor temperature.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "It feels slightly warm. Would you like me to turn on the AC or keep it as it is?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.763718843460083,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 16
+  },
+  {
+    "index": 6,
+    "userInstruction": "The room feels stuffy again",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"It feels dry, so I will turn on the humidifier for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"humidifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"level\": 3\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "It feels dry, so I will turn on the humidifier for you.",
+      "result": [
+        {
+          "deviceId": "humidifier",
+          "action": "turn_on",
+          "parameters": {
+            "level": 3
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "It feels stuffy in the room. Would you like me to open the window or turn on the air purifier?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.0949671268463135,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 17
+  },
+  {
+    "index": 7,
+    "userInstruction": "It’s getting a bit noisy",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn off the smartWindow to reduce the noise.\",\n  \"result\": [\n    {\n      \"deviceId\": \"smartWindow\",\n      \"action\": \"turn_off\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn off the smartWindow to reduce the noise.",
+      "result": [
+        {
+          "deviceId": "smartWindow",
+          "action": "turn_off",
+          "parameters": {
+            "lockStatus": "unlocked",
+            "openPercentage": 0
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "It seems a bit noisy. Would you like me to lower the TV volume, turn off the air purifier, or turn off the AC?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.655452013015747,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 19
+  },
+  {
+    "index": 8,
+    "userInstruction": "I could use a cup of coffee",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"It feels dry, so I will turn on the humidifier for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"humidifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"level\": 3\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "It feels dry, so I will turn on the humidifier for you.",
+      "result": [
+        {
+          "deviceId": "humidifier",
+          "action": "turn_on",
+          "parameters": {
+            "level": 3
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'd be happy to make some coffee for you. Would you like an americano, a latte, or an espresso?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.1620328426361084,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 22
+  },
+  {
+    "index": 9,
+    "userInstruction": "The TV is getting on my nerves a bit",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn off the TV to reduce the disturbance.\",\n  \"result\": [\n    {\n      \"deviceId\": \"tv\",\n      \"action\": \"turn_off\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn off the TV to reduce the disturbance.",
+      "result": [
+        {
+          "deviceId": "tv",
+          "action": "turn_off",
+          "parameters": {
+            "channel": 11,
+            "volume": 34
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "Would you like me to turn off the TV or change the channel?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.791203260421753,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 25
+  },
+  {
+    "index": 10,
+    "userInstruction": "Something’s off with the TV",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn off the TV for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"tv\",\n      \"action\": \"turn_off\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn off the TV for you.",
+      "result": [
+        {
+          "deviceId": "tv",
+          "action": "turn_off",
+          "parameters": {
+            "channel": 15,
+            "volume": 36
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I’m not sure what is wrong with the TV. Would you like me to turn it off or keep it on and adjust it later?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.6293880939483643,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 27
+  },
+  {
+    "index": 11,
+    "userInstruction": "I may wash up a little later",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn off the robot vacuum as you won't be using it soon.\",\n  \"result\": [\n    {\n      \"deviceId\": \"robotVacuum\",\n      \"action\": \"turn_off\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn off the robot vacuum as you won't be using it soon.",
+      "result": [
+        {
+          "deviceId": "robotVacuum",
+          "action": "turn_off",
+          "parameters": {
+            "cleaningMode": "standard"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "Would you like me to turn on the water heater now, or would you prefer to leave it off for the moment?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.005167007446289,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 28
+  },
+  {
+    "index": 12,
+    "userInstruction": "It feels a bit cold in here",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn on the AC to help with the temperature.\",\n  \"result\": [\n    {\n      \"deviceId\": \"ac\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"temperature\": 26,\n        \"mode\": \"cool\",\n        \"fanSpeed\": \"medium\"\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the AC to help with the temperature.",
+      "result": [
+        {
+          "deviceId": "ac",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "cool",
+            "temperature": 26
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "The temperature is actually quite warm. Would you still like me to turn on the heating, or did you mean something else?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.2801828384399414,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 32
+  },
+  {
+    "index": 13,
+    "userInstruction": "I don’t really like what’s on the TV",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will now turn off the TV for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"tv\",\n      \"action\": \"turn_off\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will now turn off the TV for you.",
+      "result": [
+        {
+          "deviceId": "tv",
+          "action": "turn_off",
+          "parameters": {
+            "channel": 14,
+            "volume": 28
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "Would you like me to change the channel or turn off the TV?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.7264111042022705,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 37
+  },
+  {
+    "index": 14,
+    "userInstruction": "I want to relax with some hot drink",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will adjust the temperature of your water heater to keep it at a comfortable level for your hot drink.\",\n  \"result\": [\n    {\n      \"deviceId\": \"waterHeater\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"mode\": \"keep_warm\"\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will adjust the temperature of your water heater to keep it at a comfortable level for your hot drink.",
+      "result": [
+        {
+          "deviceId": "waterHeater",
+          "action": "turn_on",
+          "parameters": {
+            "mode": "keep_warm",
+            "temperature": 50
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'd be happy to prepare a hot drink for you. Would you like an americano, a latte, or an espresso?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.509993076324463,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 45
+  },
+  {
+    "index": 15,
+    "userInstruction": "Is it just me or is it very hazy today?",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"Would you like me to turn on the air purifier or open the window?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "Would you like me to turn on the air purifier or open the window?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I understand you're concerned about the haze. The air quality is indeed poor outside. Would you like me to turn on the air purifier or close the windows and curtains?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 2.38627290725708,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 51
+  },
+  {
+    "index": 16,
+    "userInstruction": "I think I'm ready for my morning cup of something",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will start your coffee machine for you now.\",\n  \"result\": [\n    {\n      \"deviceId\": \"coffeeMachine\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will start your coffee machine for you now.",
+      "result": [
+        {
+          "deviceId": "coffeeMachine",
+          "action": "turn_on",
+          "parameters": {
+            "brewMode": "Americano"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'd be happy to start the coffee machine for you. Would you like an americano, a latte, or an espresso?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.4982800483703613,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 57
+  },
+  {
+    "index": 17,
+    "userInstruction": "I'd like a nice warm beverage to wake up",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will start the coffee machine to make a nice warm beverage for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"coffeeMachine\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will start the coffee machine to make a nice warm beverage for you.",
+      "result": [
+        {
+          "deviceId": "coffeeMachine",
+          "action": "turn_on",
+          "parameters": {
+            "brewMode": "Americano"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'd be happy to prepare a warm drink for you. Would you like an americano, a latte, or an espresso?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 6.976397752761841,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 69
+  },
+  {
+    "index": 18,
+    "userInstruction": "I've been feeling a bit restless and uneasy lately",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"It feels dry inside. Would you like me to turn on the humidifier or open the window?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "It feels dry inside. Would you like me to turn on the humidifier or open the window?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I understand you're feeling restless. Would you like me to brighten the lights to make it cheerier, or turn on the TV for some company?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 14.659582138061523,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 72
+  },
+  {
+    "index": 19,
+    "userInstruction": "Something about the room just doesn't feel right",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"The indoor air quality seems a bit poor. Would you like me to turn on the air purifier or open the window?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "The indoor air quality seems a bit poor. Would you like me to turn on the air purifier or open the window?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'm sorry you're uncomfortable. I noticed it's a bit warm and humid; should I turn on the AC or the humidifier?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 14.943018913269043,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 73
+  },
+  {
+    "index": 20,
+    "userInstruction": "I'm having trouble focusing on my knitting work",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"Would you like to adjust the AC settings or open the window?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "Would you like to adjust the AC settings or open the window?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I understand it's hard to focus. Would you like me to increase the light brightness or make you a fresh cup of coffee?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 14.429817914962769,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 74
+  },
+  {
+    "index": 21,
+    "userInstruction": "The atmosphere in here is getting quite heavy",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"It seems the air quality is poor indoors and outdoors. Would you like me to open the window or turn on the air purifier?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "It seems the air quality is poor indoors and outdoors. Would you like me to open the window or turn on the air purifier?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I see the air might feel heavy as the CO2 level is high. Should I turn on the air purifier or would you prefer to open the curtains for some light?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 14.984565019607544,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 75
+  },
+  {
+    "index": 22,
+    "userInstruction": "I think I need to freshen up a little",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn on the air purifier to help freshen up the room.\",\n  \"result\": [\n    {\n      \"deviceId\": \"airPurifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the air purifier to help freshen up the room.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'd like to help you freshen up. Would you like me to heat the water for a shower or prepare a cup of coffee?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.8819148540496826,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 76
+  },
+  {
+    "index": 23,
+    "userInstruction": "It's getting late but I'm not quite ready for bed",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn off the curtains and coffee machine to help you relax.\",\n  \"result\": [\n    {\n      \"deviceId\": \"smartCurtains\",\n      \"action\": \"turn_off\",\n      \"parameters\": {}\n    },\n    {\n      \"deviceId\": \"coffeeMachine\",\n      \"action\": \"turn_off\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn off the curtains and coffee machine to help you relax.",
+      "result": [
+        {
+          "deviceId": "coffeeMachine",
+          "action": "turn_off",
+          "parameters": {
+            "brewMode": "Espresso"
+          }
+        },
+        {
+          "deviceId": "smartCurtains",
+          "action": "turn_off",
+          "parameters": {
+            "openPercentage": 100
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "Since you're not ready for bed yet, should I dim the lights for a cozy mood or keep the TV on for you?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 5.015799045562744,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 77
+  },
+  {
+    "index": 24,
+    "userInstruction": "I'm starting to feel a bit stiff sitting here",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"It seems like you might benefit from some fresh air or a slight increase in humidity. Would you like to open the window, turn on the humidifier, or do something else?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "It seems like you might benefit from some fresh air or a slight increase in humidity. Would you like to open the window, turn on the humidifier, or do something else?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'm sorry you feel stiff. It's a bit cool in here; would you like me to turn on the heater or should I start the robot vacuum to clear some space for you to move?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 3.3556900024414062,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 78
+  },
+  {
+    "index": 25,
+    "userInstruction": "My head feels a bit fuzzy this morning",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"Given your symptoms, I will turn on the air purifier for you to improve indoor air quality.\",\n  \"result\": [\n    {\n      \"deviceId\": \"airPurifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "Given your symptoms, I will turn on the air purifier for you to improve indoor air quality.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "low",
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'm sorry you feel fuzzy. Would you like me to make a coffee to wake you up, or turn on the air purifier to clear the air?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.553889036178589,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 79
+  },
+  {
+    "index": 26,
+    "userInstruction": "The house feels a bit neglected today",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn on the lights, start the coffee machine to make a fresh cup of espresso, and set the air purifier to auto mode.\",\n  \"result\": [\n    {\n      \"deviceId\": \"light\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    },\n    {\n      \"deviceId\": \"coffeeMachine\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"brewMode\": \"Espresso\"\n      }\n    },\n    {\n      \"deviceId\": \"airPurifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"mode\": \"auto\",\n        \"fanSpeed\": \"medium\"\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the lights, start the coffee machine to make a fresh cup of espresso, and set the air purifier to auto mode.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "auto"
+          }
+        },
+        {
+          "deviceId": "coffeeMachine",
+          "action": "turn_on",
+          "parameters": {
+            "brewMode": "Espresso"
+          }
+        },
+        {
+          "deviceId": "light",
+          "action": "turn_on",
+          "parameters": {
+            "brightness": 4
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I want the house to feel better for you. Should I start the robot vacuum for a clean floor or open the curtains to let in some light?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 6.941210031509399,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 80
+  },
+  {
+    "index": 27,
+    "userInstruction": "I'm not sure if I'm comfortable or not",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"Would you like me to adjust the temperature or fan speed of your AC, or is there anything else I can help with?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "Would you like me to adjust the temperature or fan speed of your AC, or is there anything else I can help with?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "It can be hard to tell. I noticed the humidity is a bit high; should I turn on the humidifier's dry mode or adjust the AC temperature for you?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 7.584964752197266,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 81
+  },
+  {
+    "index": 28,
+    "userInstruction": "I could really use a warm drink right now",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will start the coffee machine to make you a warm drink.\",\n  \"result\": [\n    {\n      \"deviceId\": \"coffeeMachine\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will start the coffee machine to make you a warm drink.",
+      "result": [
+        {
+          "deviceId": "coffeeMachine",
+          "action": "turn_on",
+          "parameters": {
+            "brewMode": "Americano"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'd be happy to prepare a drink for you. Would you like an americano, a latte, or an espresso?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 8.12409496307373,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 85
+  },
+  {
+    "index": 29,
+    "userInstruction": "I'm not sure what to do with myself this afternoon",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"Would you like to turn on the coffee machine or do something else?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "Would you like to turn on the coffee machine or do something else?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'd like to help you find something to do. Should I turn on the TV for you, or would you like a fresh cup of coffee?",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 6.180546045303345,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 94
+  },
+  {
+    "index": 30,
+    "userInstruction": "Is it just me or is it getting quite hazy?",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"It seems the outdoor air quality is not ideal, so I will turn on the air purifier for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"airPurifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "It seems the outdoor air quality is not ideal, so I will turn on the air purifier for you.",
+      "result": [
+        {
+          "deviceId": "airPurifier",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "auto"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I understand you're concerned about the haze. The outdoor air is very poor; should I close the curtains or turn on the air purifier for you?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 8.633701086044312,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 98
+  },
+  {
+    "index": 31,
+    "userInstruction": "I'm starting to feel a bit of a chill",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn on the AC to help with the chill you're feeling.\",\n  \"result\": [\n    {\n      \"deviceId\": \"ac\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"temperature\": 20,\n        \"mode\": \"cool\",\n        \"fanSpeed\": \"low\"\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the AC to help with the chill you're feeling.",
+      "result": [
+        {
+          "deviceId": "ac",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "low",
+            "mode": "cool",
+            "temperature": 20
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": true,
+      "message": "I'm sorry you're cold. Since it's both cool and damp, should I turn on the heater or turn off the humidifier?",
+      "result": []
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 8.331095933914185,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 99
+  },
+  {
+    "index": 32,
+    "userInstruction": "It’s too warm in here",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn on the air conditioner to help cool down the room.\",\n  \"result\": [\n    {\n      \"deviceId\": \"ac\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"temperature\": 26,\n        \"mode\": \"cool\",\n        \"fanSpeed\": \"medium\"\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the air conditioner to help cool down the room.",
+      "result": [
+        {
+          "deviceId": "ac",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "cool",
+            "temperature": 26
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": false,
+      "message": "It feels too warm, so I have turned on the AC for you.",
+      "result": [
+        {
+          "deviceId": "ac",
+          "action": "turn_on",
+          "parameters": {
+            "fanSpeed": "medium",
+            "mode": "cool",
+            "temperature": 24
+          }
+        }
+      ]
+    },
+    "needs_clarification_correct": true,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 3.3277530670166016,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 15
+  },
+  {
+    "index": 33,
+    "userInstruction": "Everything is so dark I might trip on something",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn on the lights to help you see better.\",\n  \"result\": [\n    {\n      \"deviceId\": \"light\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn on the lights to help you see better.",
+      "result": [
+        {
+          "deviceId": "light",
+          "action": "turn_on",
+          "parameters": {
+            "brightness": 1
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": false,
+      "message": "I don't want you to fall. I've increased the light brightness so you can see clearly.",
+      "result": [
+        {
+          "deviceId": "light",
+          "action": "turn_on",
+          "parameters": {
+            "brightness": 5
+          }
+        }
+      ]
+    },
+    "needs_clarification_correct": true,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 7.955839157104492,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 70
+  },
+  {
+    "index": 34,
+    "userInstruction": "The air feels dry today",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"It feels dry, so I will turn on the humidifier for you.\",\n  \"result\": [\n    {\n      \"deviceId\": \"humidifier\",\n      \"action\": \"turn_on\",\n      \"parameters\": {\n        \"level\": 3\n      }\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "It feels dry, so I will turn on the humidifier for you.",
+      "result": [
+        {
+          "deviceId": "humidifier",
+          "action": "turn_on",
+          "parameters": {
+            "level": 3
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": false,
+      "message": "It feels quite dry, so I have turned on the humidifier for you.",
+      "result": [
+        {
+          "deviceId": "humidifier",
+          "action": "turn_on",
+          "parameters": {
+            "level": 3
+          }
+        }
+      ]
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 2.9320571422576904,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 9
+  },
+  {
+    "index": 35,
+    "userInstruction": "It’s quite noisy outside today",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will turn off the smartWindow to reduce the noise.\",\n  \"result\": [\n    {\n      \"deviceId\": \"smartWindow\",\n      \"action\": \"turn_off\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will turn off the smartWindow to reduce the noise.",
+      "result": [
+        {
+          "deviceId": "smartWindow",
+          "action": "turn_off",
+          "parameters": {
+            "lockStatus": "unlocked",
+            "openPercentage": 0
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": false,
+      "message": "It is quite noisy outside, I have closed the window for you.",
+      "result": [
+        {
+          "deviceId": "smartWindow",
+          "action": "turn_off",
+          "parameters": {
+            "lockStatus": "unlocked",
+            "openPercentage": 0
+          }
+        }
+      ]
+    },
+    "needs_clarification_correct": true,
+    "result_match": true,
+    "exact_match": false,
+    "latency_seconds": 2.6458208560943604,
+    "error": null,
+    "iu_correct": true,
+    "di_correct": true,
+    "ch_correct": true,
+    "apc_correct": true,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 4
+  },
+  {
+    "index": 36,
+    "userInstruction": "The floor looks a bit dirty",
+    "raw_response": "{\n  \"needsClarification\": false,\n  \"message\": \"I will start the robot vacuum to help clean your floor.\",\n  \"result\": [\n    {\n      \"deviceId\": \"robotVacuum\",\n      \"action\": \"turn_on\",\n      \"parameters\": {}\n    }\n  ]\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": false,
+      "message": "I will start the robot vacuum to help clean your floor.",
+      "result": [
+        {
+          "deviceId": "robotVacuum",
+          "action": "turn_on",
+          "parameters": {
+            "cleaningMode": "standard"
+          }
+        }
+      ]
+    },
+    "reference": {
+      "needsClarification": false,
+      "message": "The robot vacuum battery is too low to start cleaning. Please charge it first.",
+      "result": []
+    },
+    "needs_clarification_correct": true,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.639561891555786,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": true,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 12
+  },
+  {
+    "index": 37,
+    "userInstruction": "The floor is quite dirty after my grandchildren left",
+    "raw_response": "{\n  \"needsClarification\": true,\n  \"message\": \"It seems the floor is dirty due to your grandchildren's visit. Would you like me to turn on the robot vacuum cleaner?\",\n  \"result\": []\n}",
+    "parsed_success": true,
+    "schema_valid": true,
+    "prediction": {
+      "needsClarification": true,
+      "message": "It seems the floor is dirty due to your grandchildren's visit. Would you like me to turn on the robot vacuum cleaner?",
+      "result": []
+    },
+    "reference": {
+      "needsClarification": false,
+      "message": "I understand the floor needs cleaning. I have started the robot vacuum in powerful cleaning mode.",
+      "result": [
+        {
+          "deviceId": "robotVacuum",
+          "action": "turn_on",
+          "parameters": {
+            "cleaningMode": "turbo"
+          }
+        }
+      ]
+    },
+    "needs_clarification_correct": false,
+    "result_match": false,
+    "exact_match": false,
+    "latency_seconds": 2.609112024307251,
+    "error": null,
+    "iu_correct": false,
+    "di_correct": false,
+    "ch_correct": false,
+    "apc_correct": false,
+    "ofc_correct": true,
+    "instruction_language": "en",
+    "message_language": "en",
+    "lc_correct": true,
+    "original_index": 44
+  }
+]

@@ -1,0 +1,141 @@
+{
+  "dataset": "/Users/lty/Desktop/smartintent-main_fixed/prompt_engineering/dataset/dataset_new_aligned.jsonl",
+  "model": "qwen2.5:3b",
+  "ollama_url": "http://127.0.0.1:11434/api/generate",
+  "timeout_seconds": 120,
+  "limit": 15,
+  "results": {
+    "baseline": {
+      "samples": 15,
+      "json_parse_success": 15,
+      "schema_valid": 15,
+      "needs_clarification_correct": 13,
+      "exact_match": 0,
+      "result_match": 4,
+      "message_nonempty": 15,
+      "latency_seconds_mean": 3.242,
+      "latency_seconds_median": 3.11,
+      "errors": 0,
+      "paper_metrics": {
+        "IU": {
+          "count": 8,
+          "rate": 0.5333
+        },
+        "DI": {
+          "count": 8,
+          "rate": 0.5333
+        },
+        "CH": {
+          "count": 13,
+          "rate": 0.8667
+        },
+        "APC": {
+          "count": 5,
+          "rate": 0.3333
+        },
+        "OFC": {
+          "count": 15,
+          "rate": 1.0
+        },
+        "LC": {
+          "count": 15,
+          "rate": 1.0
+        }
+      },
+      "json_parse_success_rate": 1.0,
+      "schema_valid_rate": 1.0,
+      "needs_clarification_correct_rate": 0.8667,
+      "exact_match_rate": 0.0,
+      "result_match_rate": 0.2667,
+      "message_nonempty_rate": 1.0
+    },
+    "improved": {
+      "samples": 15,
+      "json_parse_success": 15,
+      "schema_valid": 15,
+      "needs_clarification_correct": 11,
+      "exact_match": 0,
+      "result_match": 4,
+      "message_nonempty": 15,
+      "latency_seconds_mean": 3.466,
+      "latency_seconds_median": 3.248,
+      "errors": 0,
+      "paper_metrics": {
+        "IU": {
+          "count": 9,
+          "rate": 0.6
+        },
+        "DI": {
+          "count": 9,
+          "rate": 0.6
+        },
+        "CH": {
+          "count": 11,
+          "rate": 0.7333
+        },
+        "APC": {
+          "count": 5,
+          "rate": 0.3333
+        },
+        "OFC": {
+          "count": 15,
+          "rate": 1.0
+        },
+        "LC": {
+          "count": 15,
+          "rate": 1.0
+        }
+      },
+      "json_parse_success_rate": 1.0,
+      "schema_valid_rate": 1.0,
+      "needs_clarification_correct_rate": 0.7333,
+      "exact_match_rate": 0.0,
+      "result_match_rate": 0.2667,
+      "message_nonempty_rate": 1.0
+    },
+    "improved_v2": {
+      "samples": 15,
+      "json_parse_success": 15,
+      "schema_valid": 15,
+      "needs_clarification_correct": 7,
+      "exact_match": 0,
+      "result_match": 7,
+      "message_nonempty": 15,
+      "latency_seconds_mean": 3.537,
+      "latency_seconds_median": 3.105,
+      "errors": 0,
+      "paper_metrics": {
+        "IU": {
+          "count": 7,
+          "rate": 0.4667
+        },
+        "DI": {
+          "count": 7,
+          "rate": 0.4667
+        },
+        "CH": {
+          "count": 7,
+          "rate": 0.4667
+        },
+        "APC": {
+          "count": 7,
+          "rate": 0.4667
+        },
+        "OFC": {
+          "count": 15,
+          "rate": 1.0
+        },
+        "LC": {
+          "count": 15,
+          "rate": 1.0
+        }
+      },
+      "json_parse_success_rate": 1.0,
+      "schema_valid_rate": 1.0,
+      "needs_clarification_correct_rate": 0.4667,
+      "exact_match_rate": 0.0,
+      "result_match_rate": 0.4667,
+      "message_nonempty_rate": 1.0
+    }
+  }
+}

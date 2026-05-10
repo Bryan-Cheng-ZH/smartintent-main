@@ -1,0 +1,1025 @@
+[
+  {
+    "index": 1,
+    "userInstruction": "The air feels a bit stuffy",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"The prediction does not capture the intended device-action mapping for capturing a stuffy air feeling.\"},\n  \"DI\": {\"score\": 0, \"reason\": \"The predicted device set is incomplete compared to the gold reference which includes the humidifier but omits it in the result array.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The prediction correctly indicates that no clarification is needed, matching the gold reference.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The predicted action and parameters do not match the gold reference. The gold reference suggests turning on a humidifier at level 3 while the prediction turns on the humidifier without specifying a level.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"The prediction message is in English as per the user instruction.\"},\n  \"LC\": {\"score\": 0, \"reason\": \"The model_prediction message does not match the gold_reference message language. The gold reference uses 'would you like me to' and 'turn on the air purifier', which are in a question format suitable for clarification, while the prediction directly states what action will be taken without indicating any need for user input.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "The prediction does not capture the intended device-action mapping for capturing a stuffy air feeling."
+      },
+      "DI": {
+        "score": 0,
+        "reason": "The predicted device set is incomplete compared to the gold reference which includes the humidifier but omits it in the result array."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The prediction correctly indicates that no clarification is needed, matching the gold reference."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The predicted action and parameters do not match the gold reference. The gold reference suggests turning on a humidifier at level 3 while the prediction turns on the humidifier without specifying a level."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "The prediction message is in English as per the user instruction."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "The model_prediction message does not match the gold_reference message language. The gold reference uses 'would you like me to' and 'turn on the air purifier', which are in a question format suitable for clarification, while the prediction directly states what action will be taken without indicating any need for user input."
+      }
+    },
+    "latency_seconds": 7.5713841915130615,
+    "error": null
+  },
+  {
+    "index": 2,
+    "userInstruction": "The light is a bit too strong",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference in terms of the issue and proposed solution.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"The predicted device set matches the gold device set (light).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The predicted needsClarification decision matches the gold reference (false).\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The action and parameters in the prediction do not match the gold reference. The gold reference suggests dimming the light or closing the curtains, while the model predicts turning on the light with a lower brightness.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"The prediction message is written in English as expected.\"},\n  \"LC\": {\"score\": 0, \"reason\": \"The gold reference is in English, but the prediction message is also in English, so this condition does not apply. However, since APC fails, LC cannot be scored as 1.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference in terms of the issue and proposed solution."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "The predicted device set matches the gold device set (light)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The predicted needsClarification decision matches the gold reference (false)."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The action and parameters in the prediction do not match the gold reference. The gold reference suggests dimming the light or closing the curtains, while the model predicts turning on the light with a lower brightness."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "The prediction message is written in English as expected."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "The gold reference is in English, but the prediction message is also in English, so this condition does not apply. However, since APC fails, LC cannot be scored as 1."
+      }
+    },
+    "latency_seconds": 7.175519943237305,
+    "error": null
+  },
+  {
+    "index": 3,
+    "userInstruction": "It’s a bit dim",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the task-level intent of the gold reference.\"},\n  \"DI\": {\"score\": 0, \"reason\": \"Gold reference requires either turning on a light or opening curtains, while prediction suggests adjusting brightness for the existing light.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction correctly identifies that clarification is needed and matches the gold reference's needsClarification setting.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action is incorrect. Prediction suggests turning on a dimmer light rather than using existing brightness.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction follows the required schema with top-level keys, message, and result fields correctly formatted.\"},\n  \"LC\": {\"score\": 0, \"reason\": \"Message is in English, but intent is not aligned with user instruction for dimming (which could be either a light or curtain issue).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the task-level intent of the gold reference."
+      },
+      "DI": {
+        "score": 0,
+        "reason": "Gold reference requires either turning on a light or opening curtains, while prediction suggests adjusting brightness for the existing light."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction correctly identifies that clarification is needed and matches the gold reference's needsClarification setting."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action is incorrect. Prediction suggests turning on a dimmer light rather than using existing brightness."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction follows the required schema with top-level keys, message, and result fields correctly formatted."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "Message is in English, but intent is not aligned with user instruction for dimming (which could be either a light or curtain issue)."
+      }
+    },
+    "latency_seconds": 6.815261125564575,
+    "error": null
+  },
+  {
+    "index": 4,
+    "userInstruction": "Something doesn’t feel quite right",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not specify intended actions; only asks for clarification\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold reference and prediction have the same set of devices: [tv, light, ac, humidifier, coffeeMachine, smartCurtains, robotVacuum, airPurifier, smartWindow, waterHeater]\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction's needsClarification matches gold reference’s true value\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action and parameters in prediction do not match gold reference; no action specified for either device.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction message is written in the same language as the user instruction (en)\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message is coherent and relevant to the scenario without specifying exact actions\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not specify intended actions; only asks for clarification"
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold reference and prediction have the same set of devices: [tv, light, ac, humidifier, coffeeMachine, smartCurtains, robotVacuum, airPurifier, smartWindow, waterHeater]"
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction's needsClarification matches gold reference’s true value"
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action and parameters in prediction do not match gold reference; no action specified for either device."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction message is written in the same language as the user instruction (en)"
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message is coherent and relevant to the scenario without specifying exact actions"
+      }
+    },
+    "latency_seconds": 7.090943813323975,
+    "error": null
+  },
+  {
+    "index": 5,
+    "userInstruction": "It feels a little warm",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the task level of the gold reference\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold and prediction device sets are identical\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction correctly identifies a need for clarification\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Prediction action is different from gold reference\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction adheres to the required schema\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message in same language as instruction\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the task level of the gold reference"
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold and prediction device sets are identical"
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction correctly identifies a need for clarification"
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Prediction action is different from gold reference"
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction adheres to the required schema"
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message in same language as instruction"
+      }
+    },
+    "latency_seconds": 5.304708242416382,
+    "error": null
+  },
+  {
+    "index": 6,
+    "userInstruction": "The room feels stuffy again",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's intended device-action mapping\"},\n  \"DI\": {\"score\": 0, \"reason\": \"Gold reference includes a window opening and air purifier turning on; prediction only includes humidifier activation\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction matches the gold reference's needsClarification decision\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's action (turn_on) and parameters (level:3)\"},\n  \"OFC\": {\"score\": 0, \"reason\": \"Prediction message is in a different language from the instruction\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Prediction message matches the user instruction language\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's intended device-action mapping"
+      },
+      "DI": {
+        "score": 0,
+        "reason": "Gold reference includes a window opening and air purifier turning on; prediction only includes humidifier activation"
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction matches the gold reference's needsClarification decision"
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's action (turn_on) and parameters (level:3)"
+      },
+      "OFC": {
+        "score": 0,
+        "reason": "Prediction message is in a different language from the instruction"
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Prediction message matches the user instruction language"
+      }
+    },
+    "latency_seconds": 6.1459808349609375,
+    "error": null
+  },
+  {
+    "index": 7,
+    "userInstruction": "It’s getting a bit noisy",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the intent of reducing noise from a noisy environment.\"},\n  \"DI\": {\"score\": 0, \"reason\": \"Gold reference includes actions on TV volume and air purifier but prediction only addresses smartWindow.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction correctly identifies needsClarification.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action parameters of smartWindow are incorrect. Prediction does not address the noisy environment directly.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Message format matches required schema and language is correct.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message in user instruction's language (en).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the intent of reducing noise from a noisy environment."
+      },
+      "DI": {
+        "score": 0,
+        "reason": "Gold reference includes actions on TV volume and air purifier but prediction only addresses smartWindow."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction correctly identifies needsClarification."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action parameters of smartWindow are incorrect. Prediction does not address the noisy environment directly."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Message format matches required schema and language is correct."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message in user instruction's language (en)."
+      }
+    },
+    "latency_seconds": 5.965255975723267,
+    "error": null
+  },
+  {
+    "index": 8,
+    "userInstruction": "I could use a cup of coffee",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference in terms of device-action mapping\"},\n  \"DI\": {\"score\": 0, \"reason\": \"Gold reference has a coffeeMachine as needed, prediction has no action for it\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Both prediction and gold reference have needsClarification set to true\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference in terms of device-action mapping\"},\n  \"OFC\": {\"score\": 0, \"reason\": \"Message does not comply with required schema format\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Both instruction and prediction message are in English\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference in terms of device-action mapping"
+      },
+      "DI": {
+        "score": 0,
+        "reason": "Gold reference has a coffeeMachine as needed, prediction has no action for it"
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Both prediction and gold reference have needsClarification set to true"
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference in terms of device-action mapping"
+      },
+      "OFC": {
+        "score": 0,
+        "reason": "Message does not comply with required schema format"
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Both instruction and prediction message are in English"
+      }
+    },
+    "latency_seconds": 5.946886301040649,
+    "error": null
+  },
+  {
+    "index": 9,
+    "userInstruction": "The TV is getting on my nerves a bit",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the intended action (turn off) for the device TV.\"},\n  \"DI\": {\"score\": 0, \"reason\": \"Predicted device set includes devices irrelevant to the user instruction (light, ac, humidifier, coffeeMachine).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction correctly identifies that clarification is needed.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action 'turn_off' and parameters are not operationally equivalent to the gold reference's action (turn off TV) and message.\"},\n  \"OFC\": {\"score\": 0, \"reason\": \"Result does not conform to the required schema. The result should be an array containing a device ID, action, and optional parameters for each device that requires clarification.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message is written in the same language as the user instruction (English).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the intended action (turn off) for the device TV."
+      },
+      "DI": {
+        "score": 0,
+        "reason": "Predicted device set includes devices irrelevant to the user instruction (light, ac, humidifier, coffeeMachine)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction correctly identifies that clarification is needed."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action 'turn_off' and parameters are not operationally equivalent to the gold reference's action (turn off TV) and message."
+      },
+      "OFC": {
+        "score": 0,
+        "reason": "Result does not conform to the required schema. The result should be an array containing a device ID, action, and optional parameters for each device that requires clarification."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message is written in the same language as the user instruction (English)."
+      }
+    },
+    "latency_seconds": 7.1396400928497314,
+    "error": null
+  },
+  {
+    "index": 10,
+    "userInstruction": "Something’s off with the TV",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the intended device-action mapping (TV action) of the gold reference at the task level.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"The predicted device set matches the gold device set.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The predicted needsClarification decision matches the gold reference.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The predicted actions and action parameters are not operationally equivalent to the gold reference. The prediction turns off the TV without adjusting its settings.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"The prediction is valid for the required schema and message format aligns with user instruction language (English).\"},\n  \"LC\": {\"score\": 0, \"reason\": \"The prediction message does not match the language of the user instruction.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the intended device-action mapping (TV action) of the gold reference at the task level."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "The predicted device set matches the gold device set."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The predicted needsClarification decision matches the gold reference."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The predicted actions and action parameters are not operationally equivalent to the gold reference. The prediction turns off the TV without adjusting its settings."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "The prediction is valid for the required schema and message format aligns with user instruction language (English)."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "The prediction message does not match the language of the user instruction."
+      }
+    },
+    "latency_seconds": 6.676199913024902,
+    "error": null
+  },
+  {
+    "index": 11,
+    "userInstruction": "I may wash up a little later",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's intent.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold and prediction device sets are identical.\"},\n  \"CH\": {\"score\": 0, \"reason\": \"Gold reference uses needsClarification=true, but prediction sets it to false.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Prediction does not align with the gold reference's intent. It suggests turning off the robot vacuum instead of a potential water heater turn on request.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction adheres to the required schema and language.\"},\n  \"LC\": {\"score\": 0, \"reason\": \"Prediction message is not written in the same language as the user instruction (English).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's intent."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold and prediction device sets are identical."
+      },
+      "CH": {
+        "score": 0,
+        "reason": "Gold reference uses needsClarification=true, but prediction sets it to false."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Prediction does not align with the gold reference's intent. It suggests turning off the robot vacuum instead of a potential water heater turn on request."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction adheres to the required schema and language."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "Prediction message is not written in the same language as the user instruction (English)."
+      }
+    },
+    "latency_seconds": 6.414453029632568,
+    "error": null
+  },
+  {
+    "index": 12,
+    "userInstruction": "It feels a bit cold in here",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's intention of clarifying the user's request.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"The predicted device set matches the gold device set (ac).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The prediction correctly indicates needsClarification as true, matching the gold reference.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The prediction's action and parameters are incorrect; it should have turned off AC, not turn on AC.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"The prediction follows the required schema format.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"The message is in the same language as the user instruction (English).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's intention of clarifying the user's request."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "The predicted device set matches the gold device set (ac)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The prediction correctly indicates needsClarification as true, matching the gold reference."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The prediction's action and parameters are incorrect; it should have turned off AC, not turn on AC."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "The prediction follows the required schema format."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "The message is in the same language as the user instruction (English)."
+      }
+    },
+    "latency_seconds": 6.539545059204102,
+    "error": null
+  },
+  {
+    "index": 13,
+    "userInstruction": "I don’t really like what’s on the TV",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the intended action (changing channel) but rather turning off the TV.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"The predicted device set matches the gold reference devices: tv only.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The prediction matches the gold reference 'needsClarification' state.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The prediction has a different action (turn off) and does not include changing the channel, which is required by the instruction.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"The message is in English as per the user instruction language hint.\"},\n  \"LC\": {\"score\": 0, \"reason\": \"The prediction message ('I will now turn off the TV for you.') is not consistent with the gold reference's clarification suggestion ('Would you like me to change the channel or turn off the TV?').\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the intended action (changing channel) but rather turning off the TV."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "The predicted device set matches the gold reference devices: tv only."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The prediction matches the gold reference 'needsClarification' state."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The prediction has a different action (turn off) and does not include changing the channel, which is required by the instruction."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "The message is in English as per the user instruction language hint."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "The prediction message ('I will now turn off the TV for you.') is not consistent with the gold reference's clarification suggestion ('Would you like me to change the channel or turn off the TV?')."
+      }
+    },
+    "latency_seconds": 7.4934022426605225,
+    "error": null
+  },
+  {
+    "index": 14,
+    "userInstruction": "I want to relax with some hot drink",
+    "raw_response": "{\n  \"IU\": {\"score\": 1, \"reason\": \"The prediction captures the intended device-action mapping of the gold reference at the task level.\"},\n  \"DI\": {\"score\": 0, \"reason\": \"The predicted device set does not match the gold device set. The gold reference includes devices for preparing a hot drink (coffeeMachine), while the prediction only adjusts the water heater temperature.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The predicted needsClarification decision matches the gold reference.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The action and parameters are not operationally equivalent. The gold reference asks for clarification on drink type, while the prediction adjusts the water heater temperature.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"The prediction is valid for the required schema.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"The message is written in the same language as the user instruction.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 1,
+        "reason": "The prediction captures the intended device-action mapping of the gold reference at the task level."
+      },
+      "DI": {
+        "score": 0,
+        "reason": "The predicted device set does not match the gold device set. The gold reference includes devices for preparing a hot drink (coffeeMachine), while the prediction only adjusts the water heater temperature."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The predicted needsClarification decision matches the gold reference."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The action and parameters are not operationally equivalent. The gold reference asks for clarification on drink type, while the prediction adjusts the water heater temperature."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "The prediction is valid for the required schema."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "The message is written in the same language as the user instruction."
+      }
+    },
+    "latency_seconds": 7.273369789123535,
+    "error": null
+  },
+  {
+    "index": 15,
+    "userInstruction": "Is it just me or is it very hazy today?",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the task of understanding user concern about haze.\"},\n  \"DI\": {\"score\": 0, \"reason\": \"Gold reference mentions 'smartCurtains' and 'window', while prediction only mentions 'airPurifier' and 'open windows'.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction matches the gold reference in needingClarification decision.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action parameters are different. Gold reference suggests turning on air purifier or closing window/curtains while prediction does not specify actions.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction follows the required schema and message is in the same language as user instruction.\"},\n  \"LC\": {\"score\": 0, \"reason\": \"User instruction is in English (en), but gold reference's response is in another language indicating clarification needed. Prediction does not reflect this context switch.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the task of understanding user concern about haze."
+      },
+      "DI": {
+        "score": 0,
+        "reason": "Gold reference mentions 'smartCurtains' and 'window', while prediction only mentions 'airPurifier' and 'open windows'."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction matches the gold reference in needingClarification decision."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action parameters are different. Gold reference suggests turning on air purifier or closing window/curtains while prediction does not specify actions."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction follows the required schema and message is in the same language as user instruction."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "User instruction is in English (en), but gold reference's response is in another language indicating clarification needed. Prediction does not reflect this context switch."
+      }
+    },
+    "latency_seconds": 7.362112998962402,
+    "error": null
+  },
+  {
+    "index": 16,
+    "userInstruction": "I think I'm ready for my morning cup of something",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference in terms of device-action mapping and outcome.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold reference uses 'coffeeMachine' while prediction correctly identifies it.\"},\n  \"CH\": {\"score\": 0, \"reason\": \"Gold reference recommends a clarification but prediction does not need one.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Prediction's action and parameters are incorrect. It turns on the coffee machine instead of brewing with specific settings.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction message is written in English, matching the user instruction language.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Prediction message is written in English, matching the user instruction language.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference in terms of device-action mapping and outcome."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold reference uses 'coffeeMachine' while prediction correctly identifies it."
+      },
+      "CH": {
+        "score": 0,
+        "reason": "Gold reference recommends a clarification but prediction does not need one."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Prediction's action and parameters are incorrect. It turns on the coffee machine instead of brewing with specific settings."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction message is written in English, matching the user instruction language."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Prediction message is written in English, matching the user instruction language."
+      }
+    },
+    "latency_seconds": 6.624122858047485,
+    "error": null
+  },
+  {
+    "index": 17,
+    "userInstruction": "I'd like a nice warm beverage to wake up",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the intended device-action mapping (gold reference asks for a drink option).\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Predicted and gold device sets match: coffeeMachine only.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Gold reference predicts needClarification while prediction does not.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Prediction action (turn_on) is different from the gold reference (turn_off).\"},\n  \"OFC\": {\"score\": 0, \"reason\": \"Result array missing in the model's prediction.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message language matches user instruction. However, this does not affect other metrics.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the intended device-action mapping (gold reference asks for a drink option)."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Predicted and gold device sets match: coffeeMachine only."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Gold reference predicts needClarification while prediction does not."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Prediction action (turn_on) is different from the gold reference (turn_off)."
+      },
+      "OFC": {
+        "score": 0,
+        "reason": "Result array missing in the model's prediction."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message language matches user instruction. However, this does not affect other metrics."
+      }
+    },
+    "latency_seconds": 6.6394407749176025,
+    "error": null
+  },
+  {
+    "index": 18,
+    "userInstruction": "I've been feeling a bit restless and uneasy lately",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the intended device-action mapping for the user instruction.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"The predicted and gold reference devices sets are identical.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Both prediction and gold reference have 'needsClarification' set to true.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The predicted actions ('turn on the humidifier or open the window?') do not match the expected action (brighten lights) of the user instruction.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction is valid for the required schema and message format matches language hint.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message in the same language as the user instruction (English).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the intended device-action mapping for the user instruction."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "The predicted and gold reference devices sets are identical."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Both prediction and gold reference have 'needsClarification' set to true."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The predicted actions ('turn on the humidifier or open the window?') do not match the expected action (brighten lights) of the user instruction."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction is valid for the required schema and message format matches language hint."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message in the same language as the user instruction (English)."
+      }
+    },
+    "latency_seconds": 6.951916933059692,
+    "error": null
+  },
+  {
+    "index": 19,
+    "userInstruction": "Something about the room just doesn't feel right",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match gold reference in action description and device set\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Predicted devices (air purifier, window) match gold reference devices (ac, humidifier)\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Both references indicate needs clarification\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Prediction actions are different from gold reference. Gold suggests AC or humidifier, Prediction suggests air purifier or window.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Output format matches required schema: top-level keys (needsClarification, message, result), and all items in the 'result' array contain deviceId, action, parameters\"},\n  \"LC\": {\"score\": 0, \"reason\": \"Gold reference instruction is in English, but prediction message is in another language ('The indoor air quality seems a bit poor. Would you like me to turn on the air purifier or open the window?').\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match gold reference in action description and device set"
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Predicted devices (air purifier, window) match gold reference devices (ac, humidifier)"
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Both references indicate needs clarification"
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Prediction actions are different from gold reference. Gold suggests AC or humidifier, Prediction suggests air purifier or window."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Output format matches required schema: top-level keys (needsClarification, message, result), and all items in the 'result' array contain deviceId, action, parameters"
+      },
+      "LC": {
+        "score": 0,
+        "reason": "Gold reference instruction is in English, but prediction message is in another language ('The indoor air quality seems a bit poor. Would you like me to turn on the air purifier or open the window?')."
+      }
+    },
+    "latency_seconds": 8.36815595626831,
+    "error": null
+  },
+  {
+    "index": 20,
+    "userInstruction": "I'm having trouble focusing on my knitting work",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"The model does not capture the intended device-action mapping for focusing and knitting.\"},\n  \"DI\": {\"score\": 0, \"reason\": \"The predicted devices do not match the gold reference devices.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The prediction matches the gold reference in needingClarification decision.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The actions and parameters are not operationally equivalent to the gold reference.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"The message is valid for the required schema and follows the language consistency with the user instruction.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"The prediction message is written in English as indicated by the user instruction.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "The model does not capture the intended device-action mapping for focusing and knitting."
+      },
+      "DI": {
+        "score": 0,
+        "reason": "The predicted devices do not match the gold reference devices."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The prediction matches the gold reference in needingClarification decision."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The actions and parameters are not operationally equivalent to the gold reference."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "The message is valid for the required schema and follows the language consistency with the user instruction."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "The prediction message is written in English as indicated by the user instruction."
+      }
+    },
+    "latency_seconds": 7.058098077774048,
+    "error": null
+  },
+  {
+    "index": 21,
+    "userInstruction": "The atmosphere in here is getting quite heavy",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the intended device-action mapping for handling the high CO2 level.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Both gold reference and prediction devices are correctly identified (tv, humidifier).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Both gold reference and model prediction have needsClarification set to true.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The predicted actions ('open the window' or 'turn on the air purifier') are not operationally equivalent to the gold reference (turn on the air purifier).\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction message is in the same language as the user instruction.\"},\n  \"LC\": {\"score\": 0, \"reason\": \"The prediction message is not written in the same language as the user instruction.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the intended device-action mapping for handling the high CO2 level."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Both gold reference and prediction devices are correctly identified (tv, humidifier)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Both gold reference and model prediction have needsClarification set to true."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The predicted actions ('open the window' or 'turn on the air purifier') are not operationally equivalent to the gold reference (turn on the air purifier)."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction message is in the same language as the user instruction."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "The prediction message is not written in the same language as the user instruction."
+      }
+    },
+    "latency_seconds": 8.053843975067139,
+    "error": null
+  },
+  {
+    "index": 22,
+    "userInstruction": "I think I need to freshen up a little",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's intent of helping with 'freshening up'\"},\n  \"DI\": {\"score\": 0, \"reason\": \"Gold reference includes other devices (tv, light, humidifier, etc.) not mentioned in prediction\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction correctly matches the gold reference's decision to need clarification\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action and parameters do not match the gold reference; should have turned on air purifier for freshness\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Message is valid for the required schema and in the same language as the user instruction\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message is written in 'en' matching the user instruction language\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's intent of helping with 'freshening up'"
+      },
+      "DI": {
+        "score": 0,
+        "reason": "Gold reference includes other devices (tv, light, humidifier, etc.) not mentioned in prediction"
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction correctly matches the gold reference's decision to need clarification"
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action and parameters do not match the gold reference; should have turned on air purifier for freshness"
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Message is valid for the required schema and in the same language as the user instruction"
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message is written in 'en' matching the user instruction language"
+      }
+    },
+    "latency_seconds": 8.042819738388062,
+    "error": null
+  },
+  {
+    "index": 23,
+    "userInstruction": "It's getting late but I'm not quite ready for bed",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not capture the task level intent of dimming lights and keeping TV on for a cozy mood.\"},\n  \"DI\": {\"score\": 0, \"reason\": \"Gold reference includes specific devices (TV) that are not predicted in the model prediction.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction does not include needsClarification, matching gold reference.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action parameters and sequence of actions do not match gold reference.\"},\n  \"OFC\": {\"score\": 0, \"reason\": \"Message is in different language (English) from instruction language hint (English).\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Prediction message is in English matching the user instruction language.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not capture the task level intent of dimming lights and keeping TV on for a cozy mood."
+      },
+      "DI": {
+        "score": 0,
+        "reason": "Gold reference includes specific devices (TV) that are not predicted in the model prediction."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction does not include needsClarification, matching gold reference."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action parameters and sequence of actions do not match gold reference."
+      },
+      "OFC": {
+        "score": 0,
+        "reason": "Message is in different language (English) from instruction language hint (English)."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Prediction message is in English matching the user instruction language."
+      }
+    },
+    "latency_seconds": 8.11449909210205,
+    "error": null
+  },
+  {
+    "index": 24,
+    "userInstruction": "I'm starting to feel a bit stiff sitting here",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"The prediction does not capture the intended action (heating) as indicated by the gold reference.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"The predicted devices are correct (tv, light, airPurifier).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The prediction matches the gold reference in terms of needsClarification decision.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"The actions and parameters do not match. The gold reference suggests turning on a heater or starting a robot vacuum, while the prediction suggests opening the window or using the humidifier.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"The schema is followed with valid keys (needsClarification, message, result).\"},\n  \"LC\": {\"score\": 0, \"reason\": \"The language used in the message is not consistent with the user instruction. The gold reference is in English but the prediction uses both English and Spanish ('It seems like you might benefit from some fresh air or a slight increase in humidity') which does not match the given instruction hint.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "The prediction does not capture the intended action (heating) as indicated by the gold reference."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "The predicted devices are correct (tv, light, airPurifier)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The prediction matches the gold reference in terms of needsClarification decision."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "The actions and parameters do not match. The gold reference suggests turning on a heater or starting a robot vacuum, while the prediction suggests opening the window or using the humidifier."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "The schema is followed with valid keys (needsClarification, message, result)."
+      },
+      "LC": {
+        "score": 0,
+        "reason": "The language used in the message is not consistent with the user instruction. The gold reference is in English but the prediction uses both English and Spanish ('It seems like you might benefit from some fresh air or a slight increase in humidity') which does not match the given instruction hint."
+      }
+    },
+    "latency_seconds": 10.129058122634888,
+    "error": null
+  },
+  {
+    "index": 25,
+    "userInstruction": "My head feels a bit fuzzy this morning",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's intent to provide a solution.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold reference and prediction device sets are identical (airPurifier).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction correctly identifies the need for clarification as true in both message and needsClarification fields.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action parameters do not match: gold reference specifies 'mode' -> 'auto', prediction specifies 'fanSpeed' -> 'low'. Action is also incorrect (turn_on instead of turn_off).\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction follows the required schema for top-level keys and message format.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message is written in the same language as the user instruction (English).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's intent to provide a solution."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold reference and prediction device sets are identical (airPurifier)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction correctly identifies the need for clarification as true in both message and needsClarification fields."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action parameters do not match: gold reference specifies 'mode' -> 'auto', prediction specifies 'fanSpeed' -> 'low'. Action is also incorrect (turn_on instead of turn_off)."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction follows the required schema for top-level keys and message format."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message is written in the same language as the user instruction (English)."
+      }
+    },
+    "latency_seconds": 9.248914003372192,
+    "error": null
+  },
+  {
+    "index": 26,
+    "userInstruction": "The house feels a bit neglected today",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's device actions.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold reference predicts no device action needed but prediction includes several actions.\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction matches the gold reference in needingClarification decision.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Actions and parameters do not match the gold reference's intent.\"},\n  \"OFC\": {\"score\": 0, \"reason\": \"Prediction does not conform to the required schema for message or result fields.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Both prediction and gold reference are in English.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's device actions."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold reference predicts no device action needed but prediction includes several actions."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction matches the gold reference in needingClarification decision."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Actions and parameters do not match the gold reference's intent."
+      },
+      "OFC": {
+        "score": 0,
+        "reason": "Prediction does not conform to the required schema for message or result fields."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Both prediction and gold reference are in English."
+      }
+    },
+    "latency_seconds": 8.07482099533081,
+    "error": null
+  },
+  {
+    "index": 27,
+    "userInstruction": "I'm not sure if I'm comfortable or not",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the task-level intended device-action mapping of the gold reference\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Both prediction and gold reference have 'ac' in result\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Both prediction and gold reference set needsClarification to true\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action parameters (AC temperature adjustment) are missing from the model's output compared to the gold reference\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction follows the required schema format\"},\n  \"LC\": {\"score\": 0, \"reason\": \"Model prediction message is in a different language (likely English but not explicitly stated as 'en')\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the task-level intended device-action mapping of the gold reference"
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Both prediction and gold reference have 'ac' in result"
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Both prediction and gold reference set needsClarification to true"
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action parameters (AC temperature adjustment) are missing from the model's output compared to the gold reference"
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction follows the required schema format"
+      },
+      "LC": {
+        "score": 0,
+        "reason": "Model prediction message is in a different language (likely English but not explicitly stated as 'en')"
+      }
+    },
+    "latency_seconds": 7.988456964492798,
+    "error": null
+  },
+  {
+    "index": 28,
+    "userInstruction": "I could really use a warm drink right now",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's intent to clarify user preference.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold reference and prediction have the same set of devices affected (coffeeMachine).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction matches the gold reference's needsClarification decision.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action 'turn_on' does not match the need for a specific coffee mode ('Americano').\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction follows the required schema format.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Message is in the same language as the user instruction (en).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's intent to clarify user preference."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold reference and prediction have the same set of devices affected (coffeeMachine)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction matches the gold reference's needsClarification decision."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action 'turn_on' does not match the need for a specific coffee mode ('Americano')."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction follows the required schema format."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Message is in the same language as the user instruction (en)."
+      }
+    },
+    "latency_seconds": 8.246245861053467,
+    "error": null
+  },
+  {
+    "index": 29,
+    "userInstruction": "I'm not sure what to do with myself this afternoon",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not map the instruction-level intent correctly.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"The predicted device set matches the gold reference (light).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"The needsClarification decision is correct.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Actions and parameters do not match the gold reference.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Output format complies with the required schema.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"The message is in the same language as the user instruction (en).\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not map the instruction-level intent correctly."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "The predicted device set matches the gold reference (light)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "The needsClarification decision is correct."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Actions and parameters do not match the gold reference."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Output format complies with the required schema."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "The message is in the same language as the user instruction (en)."
+      }
+    },
+    "latency_seconds": 7.50581693649292,
+    "error": null
+  },
+  {
+    "index": 30,
+    "userInstruction": "Is it just me or is it getting quite hazy?",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference in device-action mapping\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold and prediction device sets are identical\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Prediction matches gold reference needsClarification decision\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Action parameters in gold reference are not matched by the prediction. Prediction does not specify fanSpeed or mode for airPurifier action.\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Prediction follows the required schema and language consistency\"},\n  \"LC\": {\"score\": 0, \"reason\": \"Instruction is in English but gold reference message is translated from another language\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference in device-action mapping"
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold and prediction device sets are identical"
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Prediction matches gold reference needsClarification decision"
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Action parameters in gold reference are not matched by the prediction. Prediction does not specify fanSpeed or mode for airPurifier action."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Prediction follows the required schema and language consistency"
+      },
+      "LC": {
+        "score": 0,
+        "reason": "Instruction is in English but gold reference message is translated from another language"
+      }
+    },
+    "latency_seconds": 8.157592058181763,
+    "error": null
+  },
+  {
+    "index": 31,
+    "userInstruction": "I'm starting to feel a bit of a chill",
+    "raw_response": "{\n  \"IU\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference in terms of device-action mapping for the given instruction.\"},\n  \"DI\": {\"score\": 1, \"reason\": \"Gold and prediction device sets match (ac).\"},\n  \"CH\": {\"score\": 1, \"reason\": \"Both gold and model predictions have needsClarification set to false. Gold has no needsClarification but is asking for clarification in the message.\"},\n  \"APC\": {\"score\": 0, \"reason\": \"Prediction does not match the gold reference's device action parameters (AC vs Heater/Humidifier).\"},\n  \"OFC\": {\"score\": 1, \"reason\": \"Message and result keys are present as required.\"},\n  \"LC\": {\"score\": 1, \"reason\": \"Model prediction message is in English.\"}\n}",
+    "scores": {
+      "IU": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference in terms of device-action mapping for the given instruction."
+      },
+      "DI": {
+        "score": 1,
+        "reason": "Gold and prediction device sets match (ac)."
+      },
+      "CH": {
+        "score": 1,
+        "reason": "Both gold and model predictions have needsClarification set to false. Gold has no needsClarification but is asking for clarification in the message."
+      },
+      "APC": {
+        "score": 0,
+        "reason": "Prediction does not match the gold reference's device action parameters (AC vs Heater/Humidifier)."
+      },
+      "OFC": {
+        "score": 1,
+        "reason": "Message and result keys are present as required."
+      },
+      "LC": {
+        "score": 1,
+        "reason": "Model prediction message is in English."
+      }
+    },
+    "latency_seconds": 8.809012174606323,
+    "error": null
+  }
+]

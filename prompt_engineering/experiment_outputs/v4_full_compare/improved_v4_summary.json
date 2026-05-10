@@ -1,0 +1,44 @@
+{
+  "samples": 101,
+  "json_parse_success": 101,
+  "schema_valid": 101,
+  "needs_clarification_correct": 70,
+  "exact_match": 0,
+  "result_match": 31,
+  "message_nonempty": 101,
+  "latency_seconds_mean": 4.205,
+  "latency_seconds_median": 4.038,
+  "errors": 0,
+  "paper_metrics": {
+    "IU": {
+      "count": 51,
+      "rate": 0.505
+    },
+    "DI": {
+      "count": 52,
+      "rate": 0.5149
+    },
+    "CH": {
+      "count": 70,
+      "rate": 0.6931
+    },
+    "APC": {
+      "count": 32,
+      "rate": 0.3168
+    },
+    "OFC": {
+      "count": 101,
+      "rate": 1.0
+    },
+    "LC": {
+      "count": 101,
+      "rate": 1.0
+    }
+  },
+  "json_parse_success_rate": 1.0,
+  "schema_valid_rate": 1.0,
+  "needs_clarification_correct_rate": 0.6931,
+  "exact_match_rate": 0.0,
+  "result_match_rate": 0.3069,
+  "message_nonempty_rate": 1.0
+}

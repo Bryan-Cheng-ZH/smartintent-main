@@ -9,7 +9,7 @@
   <!-- Include Vue-i18n -->
   <script src="https://unpkg.com/vue-i18n@8.26.5/dist/vue-i18n.js"></script>
 
-  <link rel="stylesheet" href="styles.css?v=chat2">
+  <link rel="stylesheet" href="styles.css?v=chat1">
   <!-- 添加图标库 -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   
@@ -1824,14 +1824,12 @@ pushChatMessage: function(role, text) {
                 this.pushChatMessage('ai', this.intentSummary);
               }
 
-              const intentResults = this.intentResult && (this.intentResult.results || this.intentResult.result);
-
-              if (!data.allError && intentResults) {
+              if (!data.allError && this.intentResult && this.intentResult.results) {
                 this.pushChatMessage(
                   'system',
                   this.$i18n.locale === 'en' ? 'Executing...' : '正在执行...'
                 );
-                this.executeIntentNow(intentResults);
+                this.executeIntentNow(this.intentResult.results);
               } else if (!data.allError && this.rulePayload) {
                 this.pushChatMessage(
                   'system',

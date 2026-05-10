@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
-import requests
 import json
+import os
 import re
 import time
-import os
+
+import requests
 
 app = Flask(__name__)
 
@@ -23,151 +24,119 @@ DISPATCHER_URL = os.getenv(
     "http://121.40.148.46:8080/dispatch"
 )
 
-PROMPT_TEMPLATE = '''
-You will receive a JSON object with the following keys:
-
-- userInstruction (string): the user's natural language command.
-- current_state (object): an object containing the current environment information with the following properties:
-    - For controllable devices (only these ten devices are supported):
-        - "tv": current status and parameters of the TV.
-        - "light": current status and parameters of the light.
-        - "ac": current status and parameters of the air conditioner.
-        - "humidifier": current status and parameters of the humidifier.
-        - "coffeeMachine": current status and parameters of the coffee machine.
-        - "smartCurtains": current status and parameters of the smart curtains.
-        - "robotVacuum": current status and parameters of the robot vacuum cleaner.
-        - "airPurifier": current status and parameters of the air purifier.
-        - "smartWindow": current status and parameters of the smart window.
-        - "waterHeater": current status and parameters of the water heater.
-    - For sensors (which are not controllable, only provide feedback):
-        - "temperatureSensor": current temperature reading.
-        - "humiditySensor": current humidity reading.
-        - "pollutionSensor": current pollution level.
-        - "noiseSensor": current window-side noise level in dB.
-        - "indoorPollutionSensor": current indoor air pollution level in AQI.
-        - "outdoorPollutionSensor": current outdoor air pollution level in AQI.
-        - "co2Sensor": current indoor CO2 concentration in ppm.
-
-Your Task:
-1. Based on the userInstruction and current_state, determine how to adjust the state and parameters of the eight controllable devices to achieve the user's goal.
-1.1. Only generate control instructions for devices that are relevant to the user's instruction. Do not output any objects for devices that are not mentioned or implied by the user's instruction and do not require any changes.
-1.2. Only adjust the state and parameters of the devices explicitly mentioned or implied by the user's instruction. All other devices must retain their current state and parameters, without any changes.
-2. Use only the following deviceId values for controllable devices: "tv", "light", "ac", "humidifier", "coffeeMachine", "smartCurtains", "robotVacuum", "airPurifier","smartWindow", "waterHeater".
-   - If the userInstruction refers to any device outside of these, output an object for that device with status and action set to "error" and message "no valid device".
-3. For each controllable device, update its status ("on" or "off") using only actions "turn_on" or "turn_off".
-4. All device-specific settings must be provided in the "parameters" object.
-   - If a device appears in the “results” array, always include all its parameters in the “parameters” object. For each parameter, if it is not modified by the instruction, set its value to null.
-
-Device parameter rules:
-- TV:
-    - channel: integer between 1 and 20
-    - volume: integer between 0 and 100
-- Light:
-    - brightness: integer between 1 and 5
-- AC:
-    - temperature: integer between 16 and 30
-    - mode: "cool" or "heat"
-    - fanSpeed: "low", "medium", "high"
-- Humidifier:
-    - level: integer between 1 and 5
-- Coffee Machine:
-    - brewMode: "Espresso", "Latte", or "Americano"
-- Smart Curtains:
-    - openPercentage: integer between 0 and 100
-- Robot Vacuum:
-    - cleaningMode: "standard", "quiet", or "turbo"
-- Air Purifier:
-    - mode: "manual" or "auto"
-    - fanSpeed: "low", "medium", "high"
-- Smart Window:
-    - openPercentage: integer between 0 and 100
-    - lockStatus: "locked" or "unlocked"
-- Water Heater:
-    - mode: "heating" or "keep_warm"
-    - temperature: integer between 35 and 75
-
-Environmental reasoning rules:
-- If the user says the room is noisy, too loud, or the outside is noisy, use noiseSensor and close smartWindow when noise is high.
-- If noiseSensor is high, prefer smartWindow turn_off with openPercentage null and lockStatus null.
-- If indoorPollutionSensor is high and outdoorPollutionSensor is low, turn on airPurifier and open smartWindow for ventilation.
-- If outdoorPollutionSensor is high, keep smartWindow closed and use airPurifier.
-- If both indoorPollutionSensor and outdoorPollutionSensor are high, turn on airPurifier and close smartWindow.
-- If co2Sensor is high and outdoorPollutionSensor is low, open smartWindow for ventilation.
-- If co2Sensor is high but outdoorPollutionSensor is high, do not open smartWindow; prefer airPurifier or ask for confirmation if necessary.
-- If the user asks to heat water or prepare hot water, use waterHeater.
-
-Error Handling:
-- If a device is not among the eight supported devices, output:
-  {
-    "deviceId": "<deviceName>",
-    "status": "error",
-    "action": "error",
-    "message": "no valid device",
-    "parameters": {}
-  }
-- If an invalid parameter is provided, output an object for that device with "status" and "action" set to "error" and include an appropriate "message".
-
-Important:
-- Only output the final JSON object with the single key "results".
-- Do not include any additional text, explanations, markdown formatting, or extra keys beyond the specified structure.
-- Do not output devices with no changes.
-- Example outputs should only include devices that have been adjusted, and omit all others.
-
-Output Format:
-- Return the final result as a JSON object with a single key "results".
-- "results" is an array, each element represents a device control instruction.
-- Each element must include exactly the following keys:
-  - "message": a string describing the execution outcome or error.
-  - "deviceId": the device name.
-  - "status": "on", "off", or "error".
-  - "action": "turn_on", "turn_off", or "error".
-  - "parameters": an object containing the updated parameters for that device (if a parameter is not modified, its value should be null).
-- Important: **Always include the "message" field for both success and error cases.**
-- Important: **Only output devices that require a state change or parameter adjustment. Do not output devices whose state and parameters remain unchanged.**
-
-
-Example output:
-{
-  "results": [
-    {
-      "message": "TV has been successfully turned on.",
-      "deviceId": "tv",
-      "status": "on",
-      "action": "turn_on",
-      "parameters": {
-        "channel": 5,
-        "volume": 20
-      }
-    }
-  ]
+DEVICE_PARAMETER_KEYS = {
+    "tv": ["channel", "volume"],
+    "light": ["brightness"],
+    "ac": ["temperature", "mode", "fanSpeed"],
+    "humidifier": ["level"],
+    "coffeeMachine": ["brewMode"],
+    "smartCurtains": ["openPercentage"],
+    "robotVacuum": ["cleaningMode"],
+    "airPurifier": ["mode", "fanSpeed"],
+    "smartWindow": ["openPercentage", "lockStatus"],
+    "waterHeater": ["mode", "temperature"],
 }
 
-# Automation Rule Extension
+DEVICE_DEFAULTS = {
+    "tv": {"status": "off", "channel": 1, "volume": 10},
+    "light": {"status": "off", "brightness": 1},
+    "ac": {"status": "off", "temperature": 24, "mode": "cool", "fanSpeed": "medium"},
+    "humidifier": {"status": "off", "level": 1},
+    "coffeeMachine": {"status": "off", "brewMode": "Espresso"},
+    "smartCurtains": {"status": "off", "openPercentage": 0},
+    "robotVacuum": {"status": "off", "cleaningMode": "standard"},
+    "airPurifier": {"status": "off", "mode": "manual", "fanSpeed": "low"},
+    "smartWindow": {"status": "off", "openPercentage": 0, "lockStatus": "unlocked"},
+    "waterHeater": {"status": "off", "mode": "keep_warm", "temperature": 45},
+}
 
-If the user instruction implies a long-term or persistent automation rule, such as:
+SENSOR_EXTRACTORS = {
+    "temperatureSensor": "currentTemperature",
+    "humiditySensor": "currentHumidity",
+    "indoorPollutionSensor": "currentPollution",
+    "outdoorPollutionSensor": "currentPollution",
+    "co2Sensor": "currentCO2",
+    "noiseSensor": "currentNoise",
+    "pollutionSensor": "currentPollution",
+}
 
-- "In the future"
-- "Whenever"
-- "Always"
-- "Automatically"
-- "从今以后", "以后", "每次", "一直", "当...时"
+PROMPT_TEMPLATE = """
+You are a smart-home intent model. You will receive one JSON input object with:
+- userInstruction: the user's natural language request
+- current_state: the full current state of all supported devices and sensors
+- timestamp: the current time in HH:MM:SS
 
-Then return a JSON object with a top-level key `"rule"` **instead of** `"results"`.
+Supported controllable devices:
+- tv: status, channel (1-20), volume (0-100)
+- light: status, brightness (1-5)
+- ac: status, temperature (16-30), mode (cool/heat), fanSpeed (low/medium/high)
+- humidifier: status, level (1-5)
+- coffeeMachine: status, brewMode (Espresso/Latte/Americano)
+- smartCurtains: status, openPercentage (0-100)
+- robotVacuum: status, cleaningMode (standard/quiet/turbo)
+- airPurifier: status, mode (manual/auto), fanSpeed (low/medium/high)
+- smartWindow: status, openPercentage (0-100), lockStatus (locked/unlocked)
+- waterHeater: status, mode (heating/keep_warm), temperature (35-75)
 
-Use this format exactly:
+Supported sensors:
+- temperatureSensor
+- humiditySensor
+- indoorPollutionSensor
+- outdoorPollutionSensor
+- co2Sensor
+- noiseSensor
 
+Task:
+Decide whether to:
+1. ask for clarification,
+2. execute one or more valid device actions, or
+3. do nothing.
+
+Rules:
+- Output must be valid JSON only.
+- For ordinary requests, the top-level JSON must contain exactly:
+  - needsClarification
+  - message
+  - result
+- needsClarification must be true or false.
+- message must be natural English and consistent with the decision.
+- result must always be an array.
+- When needsClarification is true, result must be [].
+- When needsClarification is false, result may be [] or contain one or more actions.
+- Each action object in result must contain exactly:
+  - deviceId
+  - action
+  - parameters
+- action must be turn_on or turn_off.
+- parameters must contain all valid parameters for that device, and must never include status.
+- If the user gives a pure on/off instruction without specifying device settings, inherit the device's current parameter values from current_state.
+- Only use the supported device IDs and sensors listed above.
+- Do not use pollutionSensor. Use indoorPollutionSensor and outdoorPollutionSensor instead.
+- If information is insufficient to choose one device or one action, set needsClarification to true and ask a focused clarification question.
+- If no action is needed, set needsClarification to false, explain why in message, and set result to [].
+
+Environmental reasoning hints:
+- If the user says it is noisy outside, prefer turning off smartWindow when noiseSensor is high.
+- If indoor air is poor and outdoor air is also poor, prefer airPurifier over smartWindow.
+- If indoor air is poor and outdoor air is fresh, smartWindow or airPurifier may both be valid depending on ambiguity.
+- If co2Sensor is high and outdoor air is fresh, opening smartWindow may help.
+- If the user mentions hot water, consider waterHeater.
+
+Persistent automation rule extension:
+If the instruction clearly asks for a persistent future rule such as "whenever", "always", "automatically", "从今以后", "以后", "每次", or "一直",
+return this top-level structure instead of the ordinary output:
 {
   "rule": {
     "trigger": {
-      "sensor": "temperatureSensor",  // Must be one of: temperatureSensor, humiditySensor, pollutionSensor, noiseSensor, indoorPollutionSensor, outdoorPollutionSensor, co2Sensor
-      "operator": ">",                // One of: >, <, >=, <=, ==, !=
-      "value": 28                     // A number
+      "sensor": "temperatureSensor",
+      "operator": ">",
+      "value": 28
     },
     "action": {
-      "deviceId": "ac",               // One of the 10 controllable devices
-      "action": "turn_on",            // "turn_on" or "turn_off"
+      "deviceId": "ac",
+      "action": "turn_on",
       "parameters": {
-        "temperature": 26,            // All parameters required, unmodified = null
+        "temperature": 26,
         "mode": "cool",
         "fanSpeed": "medium"
       }
@@ -175,33 +144,175 @@ Use this format exactly:
   }
 }
 
-Do NOT return the "results" key when returning a rule. Only return the top-level "rule" field.
+Examples:
+{
+  "needsClarification": true,
+  "message": "It seems a bit stuffy. Would you like me to open the window or turn on the air purifier?",
+  "result": []
+}
 
-If the instruction is **not a persistent rule**, continue returning "results" as usual.
-In the "parameters" object, DO NOT include "status" or "action". Only include valid control parameters for the device.
-'''
+{
+  "needsClarification": false,
+  "message": "It feels dry, so I will turn on the humidifier for you.",
+  "result": [
+    {
+      "deviceId": "humidifier",
+      "action": "turn_on",
+      "parameters": {
+        "level": 3
+      }
+    }
+  ]
+}
+"""
 
-def summarize_result(result_json):
-    summaries = []
-    for item in result_json.get("results", []):
-        device = item["deviceId"]
-        action = item["action"]
-        status = item["status"]
-        params = item.get("parameters", {})
+
+def clamp_int(value, minimum, maximum):
+    if value is None:
+        return None
+    try:
+        return max(minimum, min(maximum, int(value)))
+    except (TypeError, ValueError):
+        return None
 
 
-        if status == "error":
-            summaries.append(f"Sorry, there is no such device: {device}.")
+def normalize_status(value):
+    return "on" if str(value).lower() == "on" else "off"
+
+
+def normalize_sensor_value(sensor_name, raw_value):
+    if isinstance(raw_value, dict):
+        nested_key = SENSOR_EXTRACTORS.get(sensor_name)
+        if nested_key in raw_value:
+            raw_value = raw_value[nested_key]
+        elif len(raw_value) == 1:
+            raw_value = next(iter(raw_value.values()))
         else:
-            param_strs = []
-            for k, v in params.items():
-                if v is not None:
-                    param_strs.append(f"{k}: {v}")
-            param_summary = ", ".join(param_strs) if param_strs else "no specific parameters"
+            return None
 
-            summaries.append(f"{device.upper()} will be turned {status}, with {param_summary}.")
-    
-    return " ".join(summaries)
+    if sensor_name in {"humiditySensor", "co2Sensor"}:
+        try:
+            return int(raw_value)
+        except (TypeError, ValueError):
+            return None
+
+    try:
+        return float(raw_value)
+    except (TypeError, ValueError):
+        return None
+
+
+def normalize_device_state(device_id, raw_state):
+    state = dict(DEVICE_DEFAULTS[device_id])
+    if isinstance(raw_state, dict):
+        state.update(raw_state)
+
+    state["status"] = normalize_status(state.get("status"))
+
+    if device_id == "tv":
+        state["channel"] = clamp_int(state.get("channel"), 1, 20) or DEVICE_DEFAULTS["tv"]["channel"]
+        state["volume"] = clamp_int(state.get("volume"), 0, 100)
+        if state["volume"] is None:
+            state["volume"] = DEVICE_DEFAULTS["tv"]["volume"]
+    elif device_id == "light":
+        state["brightness"] = clamp_int(state.get("brightness"), 1, 5) or DEVICE_DEFAULTS["light"]["brightness"]
+    elif device_id == "ac":
+        state["temperature"] = clamp_int(state.get("temperature"), 16, 30) or DEVICE_DEFAULTS["ac"]["temperature"]
+        state["mode"] = str(state.get("mode", "cool")).lower()
+        if state["mode"] not in {"cool", "heat"}:
+            state["mode"] = DEVICE_DEFAULTS["ac"]["mode"]
+        state["fanSpeed"] = str(state.get("fanSpeed", "medium")).lower()
+        if state["fanSpeed"] not in {"low", "medium", "high"}:
+            state["fanSpeed"] = DEVICE_DEFAULTS["ac"]["fanSpeed"]
+    elif device_id == "humidifier":
+        state["level"] = clamp_int(state.get("level"), 1, 5) or DEVICE_DEFAULTS["humidifier"]["level"]
+    elif device_id == "coffeeMachine":
+        mode = str(state.get("brewMode", "Espresso")).strip().lower()
+        state["brewMode"] = {
+            "espresso": "Espresso",
+            "latte": "Latte",
+            "americano": "Americano",
+        }.get(mode, DEVICE_DEFAULTS["coffeeMachine"]["brewMode"])
+    elif device_id == "smartCurtains":
+        state["openPercentage"] = clamp_int(state.get("openPercentage"), 0, 100)
+        if state["openPercentage"] is None:
+            state["openPercentage"] = 0 if state["status"] == "off" else 100
+    elif device_id == "robotVacuum":
+        mode = str(state.get("cleaningMode", "standard")).strip().lower()
+        state["cleaningMode"] = {
+            "standard": "standard",
+            "quiet": "quiet",
+            "strong": "turbo",
+            "powerful": "turbo",
+            "turbo": "turbo",
+        }.get(mode, DEVICE_DEFAULTS["robotVacuum"]["cleaningMode"])
+    elif device_id == "airPurifier":
+        state["mode"] = str(state.get("mode", "manual")).lower()
+        if state["mode"] not in {"manual", "auto"}:
+            state["mode"] = DEVICE_DEFAULTS["airPurifier"]["mode"]
+        state["fanSpeed"] = str(state.get("fanSpeed", "low")).lower()
+        if state["fanSpeed"] not in {"low", "medium", "high"}:
+            state["fanSpeed"] = DEVICE_DEFAULTS["airPurifier"]["fanSpeed"]
+    elif device_id == "smartWindow":
+        state["openPercentage"] = clamp_int(state.get("openPercentage"), 0, 100)
+        if state["openPercentage"] is None:
+            state["openPercentage"] = 0 if state["status"] == "off" else 100
+        lock_status = str(state.get("lockStatus", "unlocked")).lower()
+        state["lockStatus"] = lock_status if lock_status in {"locked", "unlocked"} else "unlocked"
+    elif device_id == "waterHeater":
+        state["mode"] = str(state.get("mode", "keep_warm")).lower()
+        if state["mode"] not in {"heating", "keep_warm"}:
+            state["mode"] = DEVICE_DEFAULTS["waterHeater"]["mode"]
+        state["temperature"] = clamp_int(state.get("temperature"), 35, 75) or DEVICE_DEFAULTS["waterHeater"]["temperature"]
+
+    normalized = {"status": state["status"]}
+    for key in DEVICE_PARAMETER_KEYS[device_id]:
+        normalized[key] = state[key]
+    return normalized
+
+
+def normalize_current_state(raw_state):
+    raw_state = raw_state or {}
+    normalized = {}
+
+    device_aliases = {
+        "tv": "tv",
+        "light": "light",
+        "airConditioner": "ac",
+        "ac": "ac",
+        "humidifier": "humidifier",
+        "coffeeMachine": "coffeeMachine",
+        "smartCurtains": "smartCurtains",
+        "robotVacuum": "robotVacuum",
+        "airPurifier": "airPurifier",
+        "smartWindow": "smartWindow",
+        "waterHeater": "waterHeater",
+    }
+
+    for raw_key, normalized_key in device_aliases.items():
+        if raw_key in raw_state:
+            normalized[normalized_key] = normalize_device_state(normalized_key, raw_state[raw_key])
+
+    for device_id in DEVICE_PARAMETER_KEYS:
+        if device_id not in normalized:
+            normalized[device_id] = normalize_device_state(device_id, {})
+
+    sensor_order = [
+        "temperatureSensor",
+        "humiditySensor",
+        "indoorPollutionSensor",
+        "outdoorPollutionSensor",
+        "co2Sensor",
+        "noiseSensor",
+    ]
+
+    for sensor_name in sensor_order:
+        raw_value = raw_state.get(sensor_name)
+        if raw_value is None and sensor_name == "indoorPollutionSensor":
+            raw_value = raw_state.get("pollutionSensor")
+        normalized[sensor_name] = normalize_sensor_value(sensor_name, raw_value)
+
+    return normalized
 
 
 def extract_json_payload(text):
@@ -214,11 +325,11 @@ def extract_json_payload(text):
         pass
 
     decoder = json.JSONDecoder()
-    for i, char in enumerate(cleaned):
+    for index, char in enumerate(cleaned):
         if char not in "{[":
             continue
         try:
-            parsed, _ = decoder.raw_decode(cleaned[i:])
+            parsed, _ = decoder.raw_decode(cleaned[index:])
             return parsed
         except json.JSONDecodeError:
             continue
@@ -226,29 +337,208 @@ def extract_json_payload(text):
     raise ValueError("No valid JSON object found in model response")
 
 
-# Get json file
-def call_deepseek(user_instruction, current_state):
+def sanitize_parameters(device_id, parameters):
+    parameters = parameters or {}
+
+    if device_id == "tv":
+        return {
+            "channel": clamp_int(parameters.get("channel"), 1, 20),
+            "volume": clamp_int(parameters.get("volume"), 0, 100),
+        }
+    if device_id == "light":
+        return {"brightness": clamp_int(parameters.get("brightness"), 1, 5)}
+    if device_id == "ac":
+        mode = parameters.get("mode")
+        if mode is not None:
+            mode = str(mode).lower()
+            if mode not in {"cool", "heat"}:
+                mode = None
+        fan_speed = parameters.get("fanSpeed")
+        if fan_speed is not None:
+            fan_speed = str(fan_speed).lower()
+            if fan_speed not in {"low", "medium", "high"}:
+                fan_speed = None
+        return {
+            "temperature": clamp_int(parameters.get("temperature"), 16, 30),
+            "mode": mode,
+            "fanSpeed": fan_speed,
+        }
+    if device_id == "humidifier":
+        return {"level": clamp_int(parameters.get("level"), 1, 5)}
+    if device_id == "coffeeMachine":
+        mode = parameters.get("brewMode")
+        if mode is None:
+            normalized_mode = None
+        else:
+            normalized_mode = {
+                "espresso": "Espresso",
+                "latte": "Latte",
+                "americano": "Americano",
+            }.get(str(mode).lower())
+        return {"brewMode": normalized_mode}
+    if device_id == "smartCurtains":
+        return {"openPercentage": clamp_int(parameters.get("openPercentage"), 0, 100)}
+    if device_id == "robotVacuum":
+        mode = parameters.get("cleaningMode")
+        normalized_mode = {
+            "standard": "standard",
+            "quiet": "quiet",
+            "strong": "turbo",
+            "powerful": "turbo",
+            "turbo": "turbo",
+        }.get(str(mode).lower()) if mode is not None else None
+        return {"cleaningMode": normalized_mode}
+    if device_id == "airPurifier":
+        mode = parameters.get("mode")
+        if mode is not None:
+            mode = str(mode).lower()
+            if mode not in {"manual", "auto"}:
+                mode = None
+        fan_speed = parameters.get("fanSpeed")
+        if fan_speed is not None:
+            fan_speed = str(fan_speed).lower()
+            if fan_speed not in {"low", "medium", "high"}:
+                fan_speed = None
+        return {"mode": mode, "fanSpeed": fan_speed}
+    if device_id == "smartWindow":
+        lock_status = parameters.get("lockStatus")
+        if lock_status is not None:
+            lock_status = str(lock_status).lower()
+            if lock_status not in {"locked", "unlocked"}:
+                lock_status = None
+        return {
+            "openPercentage": clamp_int(parameters.get("openPercentage"), 0, 100),
+            "lockStatus": lock_status,
+        }
+    if device_id == "waterHeater":
+        mode = parameters.get("mode")
+        if mode is not None:
+            mode = str(mode).lower()
+            if mode not in {"heating", "keep_warm"}:
+                mode = None
+        return {
+            "mode": mode,
+            "temperature": clamp_int(parameters.get("temperature"), 35, 75),
+        }
+    return {}
+
+
+def inherit_device_parameters(device_id, parameters, current_state):
+    merged = {}
+    current_params = current_state.get(device_id, {})
+    sanitized = sanitize_parameters(device_id, parameters)
+
+    for key in DEVICE_PARAMETER_KEYS.get(device_id, []):
+        value = sanitized.get(key)
+        if value is None:
+            value = current_params.get(key, DEVICE_DEFAULTS[device_id].get(key))
+        merged[key] = value
+
+    return merged
+
+
+def summarize_result(intent_result):
+    if intent_result.get("message"):
+        return intent_result["message"]
+
+    if intent_result.get("needsClarification"):
+        return "Clarification is required."
+
+    actions = intent_result.get("result", [])
+    if not actions:
+        return "No action is needed."
+
+    parts = []
+    for item in actions:
+        parts.append(f"{item['action']} {item['deviceId']}")
+    return ", ".join(parts)
+
+
+def normalize_intent_result(payload, current_state):
+    if "rule" in payload:
+        action = payload["rule"].get("action", {})
+        device_id = action.get("deviceId")
+        if device_id in DEVICE_PARAMETER_KEYS:
+            action["parameters"] = inherit_device_parameters(
+                device_id,
+                action.get("parameters"),
+                current_state
+            )
+        payload["rule"]["action"] = action
+        return payload
+
+    result_items = payload.get("result")
+    if result_items is None:
+        result_items = payload.get("results", [])
+
+    normalized_result = []
+    for item in result_items or []:
+        device_id = item.get("deviceId")
+        action = item.get("action")
+        if device_id not in DEVICE_PARAMETER_KEYS or action not in {"turn_on", "turn_off"}:
+            continue
+
+        normalized_result.append({
+            "deviceId": device_id,
+            "action": action,
+            "parameters": inherit_device_parameters(
+                device_id,
+                item.get("parameters"),
+                current_state
+            )
+        })
+
+    needs_clarification = bool(payload.get("needsClarification", False))
+    if needs_clarification:
+        normalized_result = []
+
+    message = payload.get("message")
+    if not isinstance(message, str) or not message.strip():
+        if needs_clarification:
+            message = "I need a little more information before I can decide."
+        elif normalized_result:
+            message = "I will handle that for you."
+        else:
+            message = "No action is needed right now."
+
+    return {
+        "needsClarification": needs_clarification,
+        "message": message.strip(),
+        "result": normalized_result,
+    }
+
+
+def call_qwen(user_instruction, current_state, timestamp):
+    model_input = {
+        "userInstruction": user_instruction,
+        "current_state": current_state,
+        "timestamp": timestamp,
+    }
     full_prompt = (
         PROMPT_TEMPLATE
-        + "\n\nReturn only valid JSON. Do not include explanations, comments, markdown, or code fences."
-        + f"\n\nInput:\n{{\n  \"userInstruction\": \"{user_instruction}\",\n  \"current_state\": {json.dumps(current_state, ensure_ascii=False)}\n}}"
+        + "\nReturn only valid JSON. Do not include markdown or code fences."
+        + f"\n\nInput:\n{json.dumps(model_input, ensure_ascii=False, indent=2)}"
     )
 
-    response = requests.post(
-        OLLAMA_URL,
-        json={
-            "model": OLLAMA_MODEL,
-            "prompt": full_prompt,
-            "stream": False
-        },
-        timeout=120
-    )
-    response.raise_for_status()
+    try:
+        response = requests.post(
+            OLLAMA_URL,
+            json={
+                "model": OLLAMA_MODEL,
+                "prompt": full_prompt,
+                "stream": False,
+                "keep_alive": -1
+            },
+            timeout=120
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data.get("response")
+    except Exception as exc:
+        print("[OLLAMA ERROR]:", str(exc))
+        return None
 
-    return response.json()["response"]
 
-
-# Define API to get intent (POST http://localhost:5000/get-intent)
 @app.route('/healthz', methods=['GET'])
 def healthz():
     return jsonify({
@@ -260,88 +550,88 @@ def healthz():
 
 @app.route('/get-intent', methods=['POST'])
 def get_intent():
-    data = request.get_json()
-    print("[RAW BODY]:", request.data)  # 原始 body
+    data = request.get_json() or {}
+    print("[RAW BODY]:", request.data)
     user_instruction = data.get("userInstruction")
     print("[INTENT]:", user_instruction)
 
     if not user_instruction:
-        return jsonify({"error": "userInstruction is necessary"}), 400 
+        return jsonify({"error": "userInstruction is necessary"}), 400
 
     try:
-        # Get Current State
         state_resp = requests.get(AGGREGATOR_URL, timeout=50)
         state_resp.raise_for_status()
-        print("[AGGREGATOR STATUS]:", state_resp.status_code)
+        raw_state = extract_json_payload(state_resp.text)
+        current_state = normalize_current_state(raw_state)
+        timestamp = data.get("timestamp") or time.strftime("%H:%M:%S")
+
         print("[AGGREGATOR RAW TEXT]:", state_resp.text)
-        current_state = extract_json_payload(state_resp.text)
-        print("[STATE]:", current_state)
+        print("[NORMALIZED STATE]:", current_state)
 
-        # Call LLM
-        result_text = call_deepseek(user_instruction, current_state)
-        print("[LLM Results_text]:", result_text)
+        result_text = call_qwen(user_instruction, current_state, timestamp)
+        print("[LLM RESULT TEXT]:", result_text)
 
-        # Convert test into json format
+        if result_text is None:
+            fallback = {
+                "needsClarification": False,
+                "message": "The local model is currently unavailable. Please try again later.",
+                "result": []
+            }
+            return jsonify({
+                "error": "LLM unavailable or Ollama failed",
+                "fallback": True,
+                "intent_result": fallback,
+                "summary": fallback["message"],
+                "allError": True
+            }), 503
+
         try:
-            result_json = extract_json_payload(result_text)
-            if "rule" in result_json:
-                print("===== NEW GET-INTENT RULE BRANCH =====")
-                print("This version should NOT save to Mongo before confirmation")
-                print("[LLM Results_json]:", result_json)
-                rule_id = f"rule_{int(time.time())}"  # 生成唯一 ID
-                rule_payload = {
-                    "id": rule_id,
-                    "trigger": result_json["rule"]["trigger"],
-                    "action": result_json["rule"]["action"],
-                    "active": True
-                }
-                # 存入 rule-engine
-                # try:
-                #     rule_resp = requests.post("http://rule-engine.default/rules", json=rule_payload)
-                #     print("✅ Rule has been written to MongoDB:", rule_resp.json())
-                # except Exception as e:
-                #     print("❌ Failed to write the rule to MongoDC:", str(e))
-
-                return jsonify({
-                    "LLM_result":result_text,
-                    "rule_payload": rule_payload,
-                    "summary": f"✅ It's suggested to created the rule：When {rule_payload['trigger']['sensor']} {rule_payload['trigger']['operator']} {rule_payload['trigger']['value']} ，Automatically execute {rule_payload['action']['deviceId']} control。",
-                    "allError": False
-                })
-        except Exception as e:
+            parsed_payload = extract_json_payload(result_text)
+        except Exception:
             return jsonify({
                 "error": "Model return result can not be parsed into JSON",
                 "raw_result": result_text
             }), 500
 
-        print("[LLM Results_json]:", result_json)
-        summary_text = summarize_result(result_json)
-        print("[LLM Results_json_Natural_language]:", summary_text)
+        normalized_payload = normalize_intent_result(parsed_payload or {}, current_state)
 
-        all_error = all(item["status"] == "error" for item in result_json.get("results", []))
+        if "rule" in normalized_payload:
+            rule_payload = {
+                "id": f"rule_{int(time.time())}",
+                "trigger": normalized_payload["rule"]["trigger"],
+                "action": normalized_payload["rule"]["action"],
+                "active": True
+            }
+            return jsonify({
+                "LLM_result": result_text,
+                "rule_payload": rule_payload,
+                "summary": (
+                    f"When {rule_payload['trigger']['sensor']} "
+                    f"{rule_payload['trigger']['operator']} "
+                    f"{rule_payload['trigger']['value']}, "
+                    f"{rule_payload['action']['deviceId']} will run automatically."
+                ),
+                "allError": False
+            })
 
+        summary_text = summarize_result(normalized_payload)
         return jsonify({
-            "intent_result": result_json,
+            "intent_result": normalized_payload,
             "summary": summary_text,
-            "allError": all_error
+            "allError": False
         })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+
 
 @app.route('/confirm-rule', methods=['POST'])
 def confirm_rule():
     try:
         data = request.get_json()
-        print("===== /confirm-rule called =====")
-        print("Received data:", data)
-
         if not data:
             return jsonify({"error": "No JSON body received"}), 400
 
         rule_payload = data.get("rule_payload")
-        print("rule_payload:", rule_payload)
-
         if not rule_payload:
             return jsonify({"error": "rule_payload is required"}), 400
 
@@ -353,9 +643,6 @@ def confirm_rule():
             json=rule_payload,
             timeout=10
         )
-
-        print("rule-engine status:", rule_resp.status_code)
-        print("rule-engine text:", rule_resp.text)
 
         try:
             rule_engine_response = rule_resp.json()
@@ -374,38 +661,38 @@ def confirm_rule():
             "rule_engine_status": rule_resp.status_code,
             "rule_engine_response": rule_engine_response
         }), 201
-
-    except Exception as e:
-        print("confirm_rule exception:", str(e))
-        return jsonify({"error": str(e)}), 500
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
 
 
 @app.route('/execute-intent', methods=['POST'])
 def execute_intent():
-    data = request.get_json()
-    results = data.get("results", [])
+    data = request.get_json() or {}
+    results = data.get("result", data.get("results", []))
 
     dispatch_responses = []
     for item in results:
-        if item.get("parameters") is None:
-            item["parameters"] = {}
-            
+        payload = {
+            "deviceId": item.get("deviceId"),
+            "action": item.get("action"),
+            "parameters": item.get("parameters") or {}
+        }
         try:
             dispatch_resp = requests.post(
                 DISPATCHER_URL,
-                json=item,
+                json=payload,
                 timeout=5
             )
             dispatch_responses.append({
-                "deviceId": item.get("deviceId"),
+                "deviceId": payload.get("deviceId"),
                 "status": "success" if dispatch_resp.ok else "failed",
                 "response": dispatch_resp.json()
             })
-        except Exception as e:
+        except Exception as exc:
             dispatch_responses.append({
-                "deviceId": item.get("deviceId"),
+                "deviceId": payload.get("deviceId"),
                 "status": "error",
-                "error": str(e)
+                "error": str(exc)
             })
 
     return jsonify({

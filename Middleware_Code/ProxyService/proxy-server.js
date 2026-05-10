@@ -4,7 +4,7 @@ const { URL } = require('url');
 
 // 目标 Aggregator 服务地址
 const TARGET_URL = 'http://aggregator.default';
-const INTENT_SERVER_URL = process.env.INTENT_SERVER_URL || 'http://intent-server.default';
+const INTENT_SERVER_URL = process.env.INTENT_SERVER_URL || 'https://intent.smartintent.org';
 
 const proxyServer = http.createServer((req, res) => {
   // CORS 设置
@@ -29,6 +29,59 @@ const proxyServer = http.createServer((req, res) => {
   let path = targetUrl.pathname + targetUrl.search;
   const intentServerUrl = new URL(INTENT_SERVER_URL);
 
+
+// ================== HEALTH CHECK ==================
+if (url === '/health' && req.method === 'GET') {
+  const health = {
+    proxy: "ok",
+    intent: "not_checked",
+    ollama: "unknown",
+    model_loaded: false,
+    checked_at: new Date().toISOString()
+  };
+
+  const ollamaReq = http.get('http://172.21.79.100:11434/api/ps', (ollamaRes) => {
+    let data = '';
+
+    ollamaRes.on('data', chunk => data += chunk);
+
+    ollamaRes.on('end', () => {
+      try {
+        const json = JSON.parse(data);
+        const models = json.models || [];
+        const names = models.map(m => m.name || m.model);
+
+        health.ollama = "ok";
+        health.model_loaded = names.includes("qwen2.5:3b");
+        health.overall = health.ollama === "ok" && health.model_loaded ? "ok" : "warning";
+      } catch (e) {
+        health.ollama = "error";
+        health.overall = "warning";
+      }
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(health));
+    });
+  });
+
+  ollamaReq.on('error', () => {
+    health.ollama = "error";
+    health.overall = "warning";
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(health));
+  });
+
+  ollamaReq.setTimeout(5000, () => {
+    health.ollama = "timeout";
+    health.overall = "warning";
+    ollamaReq.destroy();
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(health));
+  });
+
+  return;
+}
+// ================== HEALTH CHECK END ==================
 
   if (url === '/command') {
     hostname = intentServerUrl.hostname;
